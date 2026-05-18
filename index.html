@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ESV Grein | Farbige Kehren (grün/rot) | iPad optimiert</title>
+    <title>ESV Grein | Automatische Spielwertung | iPad optimiert</title>
     <style>
         * {
             margin: 0;
@@ -23,7 +23,6 @@
             align-items: center;
         }
 
-        /* iPad Pro 2388x1668 Querformat Optimierung */
         .dashboard {
             width: 100%;
             height: 100%;
@@ -35,7 +34,6 @@
             box-shadow: 0 0 0 2px #d1e2c4;
         }
 
-        /* Kopfleiste */
         .top-bar {
             grid-column: 1 / -1;
             background: white;
@@ -100,7 +98,6 @@
             height: 20px;
         }
 
-        /* Linke/Rechte Spalten – kompakte Eingabe */
         .input-left, .input-right {
             background: #fafdf8;
             overflow-y: auto;
@@ -134,13 +131,12 @@
             border: 1px solid #e0ecd6;
             transition: background 0.1s ease;
         }
-        /* Farbige Hintergründe für Kehren */
         .kehre-row.current-kehre-bg {
-            background: #c8e6c9 !important;  /* hellgrün für aktuelle Kehre */
+            background: #c8e6c9 !important;
             border-left: 5px solid #2e7d32;
         }
         .kehre-row.played-kehre-bg {
-            background: #ffcdd2 !important;  /* hellrot für bereits gespielte Kehren */
+            background: #ffcdd2 !important;
             border-left: 5px solid #c62828;
         }
         .kehre-nr {
@@ -187,7 +183,6 @@
             font-size: 1rem;
         }
 
-        /* ZENTRUM – ohne Timer, mehr Platz für Ergebnisse */
         .center-hero {
             background: #ffffff;
             display: flex;
@@ -197,7 +192,6 @@
             overflow-y: auto;
         }
 
-        /* Ergebnis-Karten */
         .result-mega {
             display: flex;
             gap: 35px;
@@ -260,7 +254,6 @@
             margin-left: 10px;
         }
 
-        /* AKTUELLE KEHRE – zentrale Anzeige */
         .current-kehre-center {
             text-align: center;
             margin: 5px auto 5px auto;
@@ -312,7 +305,6 @@
             margin-left: 12px;
         }
 
-        /* Aktionsleiste */
         .action-footer {
             grid-column: 1 / -1;
             background: white;
@@ -370,7 +362,7 @@
 <body>
 <div class="dashboard">
     <div class="top-bar">
-        <h1>🥌 ESV Grein · First to 2 Games 🥌</h1>
+        <h1>🥌 ESV Grein · Automatik-Wertung 🥌</h1>
         <div class="settings-group">
             <input type="text" id="teamANameSide" class="team-name-input" value="Mannschaft W">
             <span>🆚</span>
@@ -415,7 +407,7 @@
         </div>
 
         <div id="globalWinnerMsg" style="margin-top: 10px; text-align: center;"></div>
-        <div id="lockInfoMitte" class="lock-info" style="display: none; text-align: center;">🔒 Spiel beendet – neues Spiel starten</div>
+        <div id="lockInfoMitte" class="lock-info" style="display: none; text-align: center;">🔒 Gesamtsieger steht fest</div>
     </div>
 
     <div class="input-right">
@@ -425,26 +417,27 @@
     </div>
 
     <div class="action-footer">
-        <button class="action-btn action-win" id="winGameBtn">🏆 Spiel gewinnen</button>
+        <button class="action-btn action-win" id="winGameBtn">🏆 Manuell werten</button>
         <button class="action-btn action-reset" id="resetRoundBtn">🔄 Runde löschen</button>
         <button class="action-btn action-new" id="newGameBtn">✨ Neues Spiel</button>
-        <button class="action-btn action-clear" id="resetTotalBtn">🗑️ Gesamtwertung</button>
+        <button class="action-btn action-clear" id="resetTotalBtn">🗑️ Siege zurücksetzen</button>
         <button class="action-btn action-pdf" id="printPDFBtn">🖨️ Drucken (PDF)</button>
     </div>
 </div>
 
 <script>
-    // ---------- SPIELSTAND ----------
+    // -------------------- SPIELSTAND --------------------
     let anzahlKehren = 6;
     let teamAPunkte = new Array(6).fill(0);
     let teamBPunkte = new Array(6).fill(0);
     let gamesWonA = 0, gamesWonB = 0;
-    let overallWinner = false;
+    let overallWinner = false;          // true wenn ein Team 2 Spiele gewonnen hat
     let teamAName = "Mannschaft W";
     let teamBName = "Mannschaft E";
     let speechEnabled = true;
+    let autoEvaluationLock = false;      // verhindert mehrfache automatische Spielwertung
 
-    // DOM Elemente
+    // DOM
     const centerTeamA = document.getElementById('centerTeamA');
     const centerTeamB = document.getElementById('centerTeamB');
     const centerRoundA = document.getElementById('centerRoundA');
@@ -459,7 +452,104 @@
 
     const sum = arr => arr.reduce((a,b)=>a+b,0);
 
-    // Ermittelt die aktuell zu spielende Kehre (1-basiert)
+    // ----- Helper: Prüfen ob alle Kehren belegt sind (beide Teams haben Werte >0 oder zumindest eingetragen - hier zählt, dass beide Felder nicht mehr 0/0 sind)
+    function isEveryKehrePlayed() {
+        for (let i = 0; i < anzahlKehren; i++) {
+            // Eine Kehre gilt als gespielt, wenn mindestens ein Team Punkte hat (üblich im Curling)
+            if (teamAPunkte[i] === 0 && teamBPunkte[i] === 0) return false;
+        }
+        return true;
+    }
+
+    // Automatische Spielauswertung: Wer hat nach allen Kehren mehr Punkte?
+    function autoEvaluateGameIfComplete() {
+        if (overallWinner) return false;
+        if (!isEveryKehrePlayed()) return false;
+        if (autoEvaluationLock) return false;   // bereits am auswerten
+
+        const totalA = sum(teamAPunkte);
+        const totalB = sum(teamBPunkte);
+        
+        // Nur auswerten wenn tatsächlich Punkte existieren
+        if (totalA === 0 && totalB === 0) return false;
+        
+        autoEvaluationLock = true;
+        
+        let winnerTeam = null; // 'A' oder 'B'
+        let isTie = false;
+        
+        if (totalA > totalB) winnerTeam = 'A';
+        else if (totalB > totalA) winnerTeam = 'B';
+        else isTie = true;
+        
+        const winnerName = winnerTeam === 'A' ? teamAName : (winnerTeam === 'B' ? teamBName : null);
+        
+        if (!isTie && winnerTeam) {
+            // AUTOMATISCHEN SIEG VERGEBEN (ein Punkt für die Mannschaft)
+            speakText(`Alle ${anzahlKehren} Kehren gespielt. ${winnerName} gewinnt das Spiel mit ${totalA}:${totalB}.`);
+            showToast(`🏆 Automatische Wertung: ${winnerName} gewinnt das Spiel! (${totalA}:${totalB})`, 3000);
+            
+            // Punkt für den Sieger eintragen
+            if (winnerTeam === 'A') {
+                gamesWonA++;
+            } else {
+                gamesWonB++;
+            }
+            updateCenterUI();
+            
+            // Prüfen ob jetzt Gesamtsieger (2 Siege)
+            checkAndSetOverallWinner();
+            
+            // Nachdem das Spiel gewertet wurde: Rücksetzen der Kehren für nächstes Spiel
+            // Nur zurücksetzen, wenn noch kein Gesamtsieger feststeht (sonst bleibt alles stehen)
+            if (!overallWinner) {
+                // Reset für neue Runde: Kehren alle auf 0 setzen, aber Siege bleiben
+                for (let i = 0; i < anzahlKehren; i++) {
+                    teamAPunkte[i] = 0;
+                    teamBPunkte[i] = 0;
+                }
+                renderFullSidePanels();
+                updateCenterUI();
+                showToast("🔄 Neue Runde – Kehren zurückgesetzt", 2000);
+                speakText("Neue Runde, Kehren zurückgesetzt.");
+            } else {
+                // Spiel ist komplett beendet, keine Änderungen mehr
+                renderFullSidePanels();
+                updateCenterUI();
+            }
+            autoEvaluationLock = false;
+            return true;
+        } 
+        else if (isTie) {
+            // Unentschieden: Keine automatische Wertung, Benutzer muss via "Spiel gewinnen" entscheiden
+            speakText(`Alle ${anzahlKehren} Kehren gespielt. Das Spiel endet unentschieden mit ${totalA}:${totalB}. Bitte entscheiden Sie manuell über den Sieger.`);
+            showToast(`⚠️ Unentschieden (${totalA}:${totalB}) – Bitte "Spiel gewinnen" für Entscheidung nutzen.`, 4000);
+            globalWinnerMsgDiv.innerHTML = `<div class="global-winner" style="background:#ffe0a3;">🤝 UNENTSCHIEDEN nach ${anzahlKehren} Kehren (${totalA}:${totalB}). Klicke "Spiel gewinnen" und wähle Sieger.</div>`;
+            autoEvaluationLock = false;
+            return false;
+        }
+        autoEvaluationLock = false;
+        return false;
+    }
+
+    // Gesamtsiegerprüfung: Wenn 2 Spiele gewonnen -> overallWinner = true
+    function checkAndSetOverallWinner() {
+        if (gamesWonA >= 2) {
+            overallWinner = true;
+            speakText(`🏆 Gesamtsieger: ${teamAName} hat zwei Spiele gewonnen und gewinnt den Wettkampf!`);
+            showToast(`🏆🏆🏆 ${teamAName} ist GESAMTSIEGER! 🏆🏆🏆`, 5000);
+            updateCenterUI();
+            return true;
+        } else if (gamesWonB >= 2) {
+            overallWinner = true;
+            speakText(`🏆 Gesamtsieger: ${teamBName} hat zwei Spiele gewonnen und gewinnt den Wettkampf!`);
+            showToast(`🏆🏆🏆 ${teamBName} ist GESAMTSIEGER! 🏆🏆🏆`, 5000);
+            updateCenterUI();
+            return true;
+        }
+        return false;
+    }
+
     function getCurrentKehreNumber() {
         if (overallWinner) return anzahlKehren;
         for (let i = 0; i < anzahlKehren; i++) {
@@ -470,33 +560,22 @@
         return anzahlKehren;
     }
 
-    // Wendet die Farben auf die Kehren-Zeilen an (links und rechts)
     function updateKehrenColors() {
         const currentKehre = getCurrentKehreNumber();
-        
-        // Linke Spalte (Team A)
         const leftRows = document.querySelectorAll('#leftKehrenPanel .kehre-row');
-        // Rechte Spalte (Team B)
         const rightRows = document.querySelectorAll('#rightKehrenPanel .kehre-row');
-        
         for (let i = 0; i < leftRows.length; i++) {
             const kehreIndex = i + 1;
-            // Entferne vorhandene Farbklassen
             leftRows[i].classList.remove('current-kehre-bg', 'played-kehre-bg');
             rightRows[i].classList.remove('current-kehre-bg', 'played-kehre-bg');
-            
             if (overallWinner) continue;
-            
             if (kehreIndex === currentKehre) {
-                // Aktuelle Kehre: hellgrün
                 leftRows[i].classList.add('current-kehre-bg');
                 rightRows[i].classList.add('current-kehre-bg');
             } else if (kehreIndex < currentKehre) {
-                // Bereits gespielte Kehren: hellrot
                 leftRows[i].classList.add('played-kehre-bg');
                 rightRows[i].classList.add('played-kehre-bg');
             }
-            // Zukünftige Kehren bleiben weiß (keine Klasse)
         }
     }
 
@@ -508,27 +587,18 @@
         }
         const current = getCurrentKehreNumber();
         currentKehreSpan.innerText = current;
+        updateKehrenColors();
         
-        // Prüfe ob alle Kehren gespielt sind
-        let allFilled = true;
-        for (let i = 0; i < anzahlKehren; i++) {
-            if (teamAPunkte[i] === 0 && teamBPunkte[i] === 0) {
-                allFilled = false;
-                break;
-            }
-        }
-        if (allFilled && !overallWinner) {
+        // Automatischen Check, ob alle Kehren voll – aber NUR wenn noch nicht ausgewertet & kein Gesamtsieger
+        if (isEveryKehrePlayed() && !overallWinner && !autoEvaluationLock) {
+            autoEvaluateGameIfComplete();
+        } else if (!isEveryKehrePlayed()) {
+            // Hinweistext zurücksetzen falls nur Teilinfo da
             const msgDiv = document.getElementById('globalWinnerMsg');
-            if (msgDiv && !overallWinner) {
-                msgDiv.innerHTML = `<div class="global-winner" style="background:#ffe0a3;">📢 Alle ${anzahlKehren} Kehren gespielt! Bitte auf "Spiel gewinnen" klicken. 📢</div>`;
-            }
-        } else {
-            const msgDiv = document.getElementById('globalWinnerMsg');
-            if (msgDiv && !overallWinner && msgDiv.innerHTML.includes("Alle Kehren gespielt")) {
+            if (msgDiv && msgDiv.innerHTML.includes("UNENTSCHIEDEN")) {
                 msgDiv.innerHTML = '';
             }
         }
-        updateKehrenColors();
     }
 
     function updateCenterUI() {
@@ -542,20 +612,14 @@
         else stampB.innerText = '';
 
         if (overallWinner) {
-            globalWinnerMsgDiv.innerHTML = `<div class="global-winner">🏆🏆🏆 ${gamesWonA>=2 ? teamAName : teamBName} hat den GESAMTSIEG errungen! 🏆🏆🏆</div>`;
+            const winnerName = gamesWonA >= 2 ? teamAName : teamBName;
+            globalWinnerMsgDiv.innerHTML = `<div class="global-winner">🏆🏆🏆 ${winnerName} hat 2 Spiele gewonnen & ist GESAMTSIEGER! 🏆🏆🏆</div>`;
             lockInfoMitte.style.display = 'inline-block';
             document.body.classList.add('game-finished');
         } else {
-            const allFilled = (() => {
-                for (let i = 0; i < anzahlKehren; i++) {
-                    if (teamAPunkte[i] === 0 && teamBPunkte[i] === 0) return false;
-                }
-                return true;
-            })();
-            if (!allFilled) {
-                if (!globalWinnerMsgDiv.innerHTML.includes("Alle Kehren gespielt")) {
+            if (!isEveryKehrePlayed()) {
+                if (globalWinnerMsgDiv.innerHTML.includes("UNENTSCHIEDEN") === false)
                     globalWinnerMsgDiv.innerHTML = '';
-                }
             }
             lockInfoMitte.style.display = 'none';
             document.body.classList.remove('game-finished');
@@ -569,13 +633,12 @@
             try { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang='de-DE'; u.rate=0.9; window.speechSynthesis.speak(u); } catch(e) {}
         }
     }
-    function showToast(msg) {
+    function showToast(msg, duration=2200) {
         let t = document.getElementById('dynamicToast');
         if(!t){ t=document.createElement('div'); t.id='dynamicToast'; t.className='toast-msg'; document.body.appendChild(t); }
-        t.innerText=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',2200);
+        t.innerText=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',duration);
     }
 
-    // Punkte-Logik
     function setPoints(team, kehreIdx, punkte) {
         if (overallWinner) { showToast("Spiel beendet – neues Spiel starten"); return; }
         if (punkte>=1 && punkte<=4) {
@@ -588,30 +651,9 @@
                 renderFullSidePanels();
                 updateCenterUI();
                 
-                let nextFree = -1;
-                for (let i = kehreIdx + 1; i < anzahlKehren; i++) {
-                    if (teamAPunkte[i] === 0 && teamBPunkte[i] === 0) {
-                        nextFree = i;
-                        break;
-                    }
-                }
-                
-                if (nextFree !== -1) {
-                    showToast(`⏩ Weiter zu Kehre ${nextFree+1}`, 1500);
-                    updateKehreDisplay();
-                } else {
-                    let allFilled = true;
-                    for (let i = 0; i < anzahlKehren; i++) {
-                        if (teamAPunkte[i] === 0 && teamBPunkte[i] === 0) {
-                            allFilled = false;
-                            break;
-                        }
-                    }
-                    if (allFilled && !overallWinner) {
-                        showToast(`🏁 Alle ${anzahlKehren} Kehren gespielt! Bitte Spiel auswerten.`, 3000);
-                        speakText(`Alle Kehren gespielt. Bitte Spiel auswerten.`);
-                        globalWinnerMsgDiv.innerHTML = `<div class="global-winner" style="background:#ffe0a3;">📢 Alle ${anzahlKehren} Kehren gespielt! Bitte auf "Spiel gewinnen" klicken. 📢</div>`;
-                    }
+                // Automatische Prüfung nach jeder Punkteingabe
+                if (isEveryKehrePlayed() && !overallWinner && !autoEvaluationLock) {
+                    autoEvaluateGameIfComplete();
                 }
             }
         }
@@ -623,10 +665,9 @@
         else teamBPunkte[kehreIdx]=0;
         renderFullSidePanels();
         updateCenterUI();
-        if (globalWinnerMsgDiv.innerHTML.includes("Alle Kehren gespielt")) {
-            globalWinnerMsgDiv.innerHTML = '';
-        }
         showToast(`Punkt in Kehre ${kehreIdx+1} gelöscht`, 1200);
+        // Falls durch löschen unentschieden-meldung nicht mehr relevant
+        if (globalWinnerMsgDiv.innerHTML.includes("UNENTSCHIEDEN")) globalWinnerMsgDiv.innerHTML = '';
     }
 
     function resetRoundOnly() {
@@ -637,40 +678,30 @@
         globalWinnerMsgDiv.innerHTML = '';
         showToast("Runde komplett gelöscht – starte bei Kehre 1", 2000);
         speakText("Runde gelöscht, alle Kehren zurückgesetzt.");
+        autoEvaluationLock = false;
     }
 
     function addWin(winner) {
         if (overallWinner) return;
         if (winner === 'A') gamesWonA++; else gamesWonB++;
         updateCenterUI();
-        if (!checkGlobalWinnerAfterAdd()) {
+        if (!checkAndSetOverallWinner()) {
+            // Keine Gesamtsieger, dann Kehren für neue Runde zurücksetzen
             for (let i=0;i<anzahlKehren;i++) { teamAPunkte[i]=0; teamBPunkte[i]=0; }
             renderFullSidePanels();
             updateCenterUI();
-            globalWinnerMsgDiv.innerHTML = '';
+            showToast("Neue Runde gestartet – Kehren zurückgesetzt", 1500);
         } else {
+            // overallWinner = true; UI sperrt sich
             renderFullSidePanels();
+            updateCenterUI();
         }
-        updateCenterUI();
+        autoEvaluationLock = false;
     }
 
-    function checkGlobalWinnerAfterAdd() {
-        if (gamesWonA >= 2) {
-            overallWinner = true;
-            speakText(`Sieger ist die Mannschaft ${teamAName}. ${teamAName} hat zwei Spiele gewonnen und ist Gesamtsieger.`);
-            updateCenterUI();
-            return true;
-        } else if (gamesWonB >= 2) {
-            overallWinner = true;
-            speakText(`Sieger ist die Mannschaft ${teamBName}. ${teamBName} hat zwei Spiele gewonnen und ist Gesamtsieger.`);
-            updateCenterUI();
-            return true;
-        }
-        return false;
-    }
-
+    // Manuelles Gewinnen (falls Unentschieden oder Eingriff)
     function winGameHandler() {
-        if (overallWinner) { showToast("Spiel beendet"); return; }
+        if (overallWinner) { showToast("Spiel bereits entschieden – neues Spiel starten"); return; }
         const sumA = sum(teamAPunkte), sumB = sum(teamBPunkte);
         if (sumA===0 && sumB===0) { showToast("Keine Punkte eingetragen!"); return; }
         if (sumA === sumB) {
@@ -692,22 +723,24 @@
     function newGameReset() {
         if (confirm("KOMPLETTRESET: Alle Punkte, Siege werden zurückgesetzt")) {
             for (let i=0;i<anzahlKehren;i++) { teamAPunkte[i]=0; teamBPunkte[i]=0; }
-            gamesWonA=0; gamesWonB=0; overallWinner=false;
+            gamesWonA=0; gamesWonB=0; overallWinner=false; autoEvaluationLock=false;
             updateCenterUI();
             renderFullSidePanels();
             globalWinnerMsgDiv.innerHTML = '';
             showToast("Neues Spiel gestartet – Kehre 1", 2000);
             speakText("Neues Spiel gestartet. Kehre 1.");
+            document.body.classList.remove('game-finished');
         }
     }
     function resetTotalScoreOnly() {
-        if (confirm("Nur gewonnene Spiele zurücksetzen? (Rundenpunkte bleiben)")) {
-            gamesWonA=0; gamesWonB=0; overallWinner=false;
+        if (confirm("Nur gewonnene Spiele zurücksetzen? (Rundenpunkte bleiben, aber Gesamtsieger wird entfernt)")) {
+            gamesWonA=0; gamesWonB=0; overallWinner=false; autoEvaluationLock=false;
             updateCenterUI();
             renderFullSidePanels();
             globalWinnerMsgDiv.innerHTML = '';
             showToast("Siege zurückgesetzt", 1500);
             speakText("Gewonnene Spiele wurden zurückgesetzt.");
+            document.body.classList.remove('game-finished');
         }
     }
 
@@ -781,7 +814,7 @@
         anzahlKehren = 6;
         teamAPunkte = new Array(6).fill(0);
         teamBPunkte = new Array(6).fill(0);
-        gamesWonA = 0; gamesWonB = 0; overallWinner = false;
+        gamesWonA = 0; gamesWonB = 0; overallWinner = false; autoEvaluationLock=false;
         teamAName = "Mannschaft W"; teamBName = "Mannschaft E";
         document.getElementById('teamANameSide').value = teamAName;
         document.getElementById('teamBNameSide').value = teamBName;
