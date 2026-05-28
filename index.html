@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ESV Grein – Meisterschaftssystem</title>
+<title>ESV Grein – Trainingwertung</title>
 
 <style>
 :root{
@@ -283,7 +283,7 @@ button{
 <body>
 
 <div class="header">
-    <h1>🥌 ESV Grein – Meisterschaftssystem</h1>
+    <h1>🥌 ESV Grein – Traingswertung</h1>
 
     <div class="header-controls">
 
@@ -462,7 +462,7 @@ function setPoints(team,index,value){
     const arena = state.arena;
 
     if(hasWinner(arena)){
-        toast('Meisterschaft beendet');
+        toast('Training beendet');
         return;
     }
 
@@ -482,7 +482,7 @@ function evaluateGame(){
     const arena = state.arena;
 
     if(hasWinner(arena)){
-        toast('Meisterschaft beendet');
+        toast('Training beendet');
         return;
     }
 
@@ -512,7 +512,7 @@ function evaluateGame(){
     arena.pointsB = Array(state.kehren).fill(null);
 
     if(hasWinner(arena)){
-        toast(`🏆 ${winnerName(arena)} gewinnt die Meisterschaft`);
+        toast(`🏆 ${winnerName(arena)} gewinnt das Training`);
     }
 
     render();
