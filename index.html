@@ -288,10 +288,10 @@ button{
     <div class="header-controls">
 
         <select id="gamesSelect">
-            <option value="2">2 Siege</option>
+            <option value="2" selected>2 Siege</option>
             <option value="3">3 Siege</option>
             <option value="4">4 Siege</option>
-            <option value="5" selected>5 Siege</option>
+            <option value="5">5 Siege</option>
             <option value="6">6 Siege</option>
         </select>
 
@@ -397,7 +397,6 @@ function renderArena(arena){
         <div class="info-bar">
             <div class="info-box">🎯 Bahn ${arena.bahn}</div>
             <div class="info-box">🏆 ${arena.winsA} : ${arena.winsB}</div>
-            <div class="info-box">Ziel: ${state.winsToChampion} Siege</div>
         </div>
 
         <div class="kehren">
