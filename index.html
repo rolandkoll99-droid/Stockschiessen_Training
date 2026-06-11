@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ESV Grein – Trainingwertung</title>
+<title>ESV Grein – Trainingswertung</title>
 
 <style>
 :root{
@@ -92,12 +92,6 @@ button{
     gap:10px;
 }
 
-.arena-title{
-    font-size:1.4rem;
-    font-weight:900;
-    color:var(--green);
-}
-
 .bahn-selector{
     display:flex;
     gap:8px;
@@ -169,21 +163,6 @@ button{
     padding:6px 16px;
     border-radius:10px;
     font-size:1.2rem;
-}
-
-.info-bar{
-    display:flex;
-    justify-content:center;
-    gap:10px;
-    flex-wrap:wrap;
-    padding:0 14px 14px;
-}
-
-.info-box{
-    background:var(--light);
-    padding:8px 14px;
-    border-radius:12px;
-    font-weight:800;
 }
 
 .kehren{
@@ -273,6 +252,7 @@ button{
     border-radius:14px;
     opacity:0;
     transition:.3s;
+    pointer-events: none;
 }
 
 .toast.show{
@@ -283,55 +263,63 @@ button{
 <body>
 
 <div class="header">
-    <h1>🥌 ESV Grein – Traingswertung</h1>
+    <h1>🥌 ESV Grein – Trainingswertung</h1>
 
     <div class="header-controls">
-
         <select id="gamesSelect">
-            <option value="2" selected>2 Siege</option>
+            <option value="2">2 Siege</option>
             <option value="3">3 Siege</option>
             <option value="4">4 Siege</option>
-            <option value="5">5 Siege</option>
+            <option value="5" selected>5 Siege</option>
             <option value="6">6 Siege</option>
         </select>
 
         <select id="kehrenSelect">
-            <option>4</option>
-            <option selected>6</option>
-            <option>8</option>
-            <option>10</option>
-            <option>12</option>
+            <option value="4">4 Kehren</option>
+            <option value="6" selected>6 Kehren</option>
+            <option value="8">8 Kehren</option>
+            <option value="10">10 Kehren</option>
+            <option value="12">12 Kehren</option>
         </select>
 
-        <button onclick="openSpectatorWindow()">📺 Zuschauer-Monitor</button>
-        <button onclick="fullReset()">🆕 Reset</button>
+        <button type="button" onclick="openSpectatorWindow()">📺 Zuschauer-Monitor</button>
+        <button type="button" onclick="fullReset()">🆕 Reset</button>
     </div>
 </div>
 
 <div class="layout" id="layout"></div>
-
 <div class="toast" id="toast"></div>
 
 <script>
+// Einfacher XSS Schutz für dynamische Strings
+function escapeHTML(str) {
+    return String(str).replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+    });
+}
+
 const state = {
-    kehren:6,
-    winsToChampion:5,
-    arena:createArena(1)
+    kehren: 6,
+    winsToChampion: 5,
+    arena: null
 };
 
 function createArena(id){
     return {
         id,
-        arenaName:`Training`,
-        bahn:1,
-        teamA:`Mannschaft W`,
-        teamB:`Mannschaft E`,
-        pointsA:Array(6).fill(null),
-        pointsB:Array(6).fill(null),
-        winsA:0,
-        winsB:0
+        arenaName: `Training`,
+        bahn: 1,
+        teamA: `Mannschaft W`,
+        teamB: `Mannschaft E`,
+        pointsA: Array(state.kehren).fill(null),
+        pointsB: Array(state.kehren).fill(null),
+        winsA: 0,
+        winsB: 0
     };
 }
+
+// Initialisiere Arena passend zum state
+state.arena = createArena(1);
 
 function render(){
     document.getElementById('layout').innerHTML = renderArena(state.arena);
@@ -339,26 +327,25 @@ function render(){
 }
 
 function renderArena(arena){
-
     const scoreA = sum(arena.pointsA);
     const scoreB = sum(arena.pointsB);
 
     return `
     <div class="arena">
-
         <div class="arena-header">
-            <input
-                    value="${arena.arenaName}"
-                    onchange="setArenaName(this.value)"
-                    style="font-size:1.1rem;font-weight:900;border:1px solid var(--border);padding:8px 12px;border-radius:10px;max-width:220px;"
-                >
+            <input 
+                type="text"
+                value="${escapeHTML(arena.arenaName)}" 
+                onchange="setArenaName(this.value)"
+                style="font-size:1.1rem;font-weight:900;border:1px solid var(--border);padding:8px 12px;border-radius:10px;max-width:220px;"
+            >
 
             <div class="bahn-selector">
                 <strong>🎯 Bahn</strong>
-
                 ${[1,2,3,4].map(b=>`
-                    <button
-                        class="bahn-btn ${arena.bahn===b?'active':''}"
+                    <button 
+                        type="button"
+                        class="bahn-btn ${arena.bahn===b?'active':''}" 
                         onclick="setBahn(${b})">
                         ${b}
                     </button>
@@ -367,15 +354,14 @@ function renderArena(arena){
         </div>
 
         <div class="team-inputs">
-            <input value="${arena.teamA}" onchange="setTeam('A',this.value)">
+            <input type="text" value="${escapeHTML(arena.teamA)}" onchange="setTeam('A',this.value)">
             <div style="display:flex;align-items:center;font-weight:900">VS</div>
-            <input value="${arena.teamB}" onchange="setTeam('B',this.value)">
+            <input type="text" value="${escapeHTML(arena.teamB)}" onchange="setTeam('B',this.value)">
         </div>
 
         <div class="scoreboard">
-
             <div class="score-card">
-                <div class="team-name">${arena.teamA}</div>
+                <div class="team-name">${escapeHTML(arena.teamA)}</div>
                 <div class="team-score">${scoreA}</div>
                 <div class="team-points">
                     Gewonnene Spiele<br>
@@ -384,82 +370,65 @@ function renderArena(arena){
             </div>
 
             <div class="score-card red">
-                <div class="team-name">${arena.teamB}</div>
+                <div class="team-name">${escapeHTML(arena.teamB)}</div>
                 <div class="team-score">${scoreB}</div>
                 <div class="team-points">
                     Gewonnene Spiele<br>
                     <span>${arena.winsB}</span>
                 </div>
             </div>
-
-        </div>
-
-        <div class="info-bar">
         </div>
 
         <div class="kehren">
-
             <div>
-                <div class="kehren-title">${arena.teamA}</div>
+                <div class="kehren-title">${escapeHTML(arena.teamA)}</div>
                 ${renderKehren(arena,'A')}
             </div>
-
             <div>
-                <div class="kehren-title">${arena.teamB}</div>
+                <div class="kehren-title">${escapeHTML(arena.teamB)}</div>
                 ${renderKehren(arena,'B')}
             </div>
-
         </div>
 
         <div class="footer">
-            <button class="gold" onclick="evaluateGame()">🏆 Spiel werten</button>
-            <button onclick="resetCurrent()">🔄 Kehren löschen</button>
+            <button type="button" class="gold" onclick="evaluateGame()">🏆 Spiel werten</button>
+            <button type="button" onclick="resetCurrent()">🔄 Kehren löschen</button>
         </div>
-
     </div>
     `;
 }
 
 function renderKehren(arena,team){
-
     let html='';
-
     const arr = team==='A' ? arena.pointsA : arena.pointsB;
 
-    for(let i=0;i<state.kehren;i++){
-
+    for(let i=0; i<state.kehren; i++){
         const active = activeKehre(arena)===i+1;
-
         html += `
         <div class="kehre-row ${active?'active':''}">
-
             <div class="kehre-number">Kehre ${i+1}</div>
-
             <div class="points">
                 ${[0,1,2,3,4].map(v=>`
-                    <button
-                        class="point-btn"
+                    <button 
+                        type="button"
+                        class="point-btn" 
                         onclick="setPoints('${team}',${i},${v})">
                         ${v}
                     </button>
                 `).join('')}
             </div>
-
             <div class="kehre-value">${arr[i] ?? '-'}</div>
-
         </div>
         `;
     }
-
     return html;
 }
 
 function setPoints(team,index,value){
-
     const arena = state.arena;
 
     if(hasWinner(arena)){
-        toast('Training beendet');
+        toast('Training beendet. Bitte Reset durchführen.');
         return;
     }
 
@@ -475,11 +444,10 @@ function setPoints(team,index,value){
 }
 
 function evaluateGame(){
-
     const arena = state.arena;
 
     if(hasWinner(arena)){
-        toast('Training beendet');
+        toast('Training bereits beendet.');
         return;
     }
 
@@ -502,14 +470,14 @@ function evaluateGame(){
         toast(`${arena.teamB} gewinnt das Spiel`);
     }
     else{
-        toast('Unentschieden');
+        toast('Unentschieden - kein Spielpunkt vergeben');
     }
 
     arena.pointsA = Array(state.kehren).fill(null);
     arena.pointsB = Array(state.kehren).fill(null);
 
     if(hasWinner(arena)){
-        toast(`🏆 ${winnerName(arena)} gewinnt das Training`);
+        toast(`🏆 ${winnerName(arena)} gewinnt das Training!`);
     }
 
     render();
@@ -568,14 +536,16 @@ function fullReset(){
 let spectatorWindow=null;
 
 function openSpectatorWindow(){
-
     spectatorWindow = window.open('','spectator','width=1920,height=1080');
+    if(!spectatorWindow) {
+        alert("Bitte Popups für diese Seite erlauben, um den Zuschauermonitor zu öffnen.");
+        return;
+    }
 
     spectatorWindow.document.write(`
     <html>
     <head>
     <title>Zuschauer Monitor</title>
-
     <style>
     body{
         margin:0;
@@ -584,21 +554,18 @@ function openSpectatorWindow(){
         font-family:Arial,sans-serif;
         padding:25px;
     }
-
     .card{
         background:white;
         color:black;
         border-radius:30px;
         padding:35px;
     }
-
     .title{
         font-size:3rem;
         font-weight:900;
         margin-bottom:20px;
         color:#1f5e3a;
     }
-
     .bahn{
         display:inline-block;
         background:#ffdf8c;
@@ -607,31 +574,26 @@ function openSpectatorWindow(){
         font-weight:900;
         margin-bottom:20px;
     }
-
     .teams{
         display:grid;
         grid-template-columns:1fr 1fr;
         gap:20px;
     }
-
     .team{
         background:#f5f8f3;
         border-radius:24px;
         padding:25px;
         text-align:center;
     }
-
     .name{
         font-size:2rem;
         font-weight:900;
     }
-
     .score{
         font-size:7rem;
         font-weight:900;
         color:#1f5e3a;
     }
-
     .wins{
         margin-top:10px;
         font-size:2rem;
@@ -639,7 +601,6 @@ function openSpectatorWindow(){
     }
     </style>
     </head>
-
     <body>
         <div class="card" id="specGrid"></div>
     </body>
@@ -647,38 +608,31 @@ function openSpectatorWindow(){
     `);
 
     spectatorWindow.document.close();
-
     updateSpectatorWindow();
 }
 
 function updateSpectatorWindow(){
-
     if(!spectatorWindow || spectatorWindow.closed) return;
-
     const arena = state.arena;
-
     const grid = spectatorWindow.document.getElementById('specGrid');
-
     if(!grid) return;
 
     grid.innerHTML = `
-        <div class="title">${arena.arenaName}</div>
+        <div class="title">${escapeHTML(arena.arenaName)}</div>
         <div class="bahn">🎯 Bahn ${arena.bahn}</div>
 
         <div class="teams">
-
             <div class="team">
-                <div class="name">${arena.teamA}</div>
+                <div class="name">${escapeHTML(arena.teamA)}</div>
                 <div class="score">${sum(arena.pointsA)}</div>
                 <div class="wins">🏆 ${arena.winsA}</div>
             </div>
 
             <div class="team">
-                <div class="name">${arena.teamB}</div>
+                <div class="name">${escapeHTML(arena.teamB)}</div>
                 <div class="score">${sum(arena.pointsB)}</div>
                 <div class="wins">🏆 ${arena.winsB}</div>
             </div>
-
         </div>
     `;
 }
@@ -690,11 +644,16 @@ function toast(msg){
     setTimeout(()=>t.classList.remove('show'),2000);
 }
 
+// Zerstörungsfreie Anpassung der Kehrenanzahl
 document.getElementById('kehrenSelect').addEventListener('change',e=>{
-    state.kehren = Number(e.target.value);
+    const newVal = Number(e.target.value);
+    state.kehren = newVal;
 
-    state.arena.pointsA = Array(state.kehren).fill(null);
-    state.arena.pointsB = Array(state.kehren).fill(null);
+    // Erweitere oder kürze das Array, anstatt es komplett zu löschen
+    while(state.arena.pointsA.length < newVal) state.arena.pointsA.push(null);
+    while(state.arena.pointsB.length < newVal) state.arena.pointsB.push(null);
+    state.arena.pointsA.length = newVal;
+    state.arena.pointsB.length = newVal;
 
     render();
 });
