@@ -2,252 +2,54 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ESV Melktal – Trainingssystem</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<title>Stocksport Training</title>
 
 <style>
-/* ===== FARBEN KONFIGURIEREN ===== */
 :root{
-    --primary-green: #1f5e3a;
-    --primary-green-dark: #0d3d22;
-    --primary-red: #b93a32;
-    --primary-gold: #ffdf8c;
-    --primary-dark: #102417;
-    --primary-light: #eef5e9;
-    --border-color: #d7e4cf;
-    --text-dark: #222222;
-    --text-light: #ffffff;
-    --text-green: #1f5e3a;
-    --text-muted: #666666;
-    --bg-body-start: #17351f;
-    --bg-body-end: #0d1f13;
-    --bg-card: #f7faf5;
-    --bg-arena: #ffffff;
-    --bg-header: var(--primary-green);
-    --bg-active: #f3fff2;
-    --bg-completed: #fff8e1;
-    --team-e-color: #1f5e3a;
-    --team-w-color: #b93a32;
-    --shadow-color: rgba(0,0,0,0.3);
+    --green:#1f5e3a;
+    --red:#b93a32;
+    --gold:#ffdf8c;
+    --dark:#102417;
+    --light:#eef5e9;
+    --border:#d7e4cf;
 }
 
-/* ===== LOGIN-STYLES ===== */
-.login-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, var(--bg-body-start), var(--bg-body-end));
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 99999;
-    transition: opacity 0.5s;
-}
-
-.login-overlay.hidden {
-    opacity: 0;
-    pointer-events: none;
-}
-
-.login-box {
-    background: var(--bg-arena);
-    padding: 40px;
-    border-radius: 30px;
-    max-width: 400px;
-    width: 90%;
-    box-shadow: 0 20px 60px var(--shadow-color);
-    text-align: center;
-}
-
-.login-box h1 {
-    color: var(--primary-green);
-    font-size: 2rem;
-    margin-bottom: 10px;
-}
-
-.login-box .subtitle {
-    color: var(--text-muted);
-    margin-bottom: 30px;
-}
-
-.login-box input {
-    width: 100%;
-    padding: 14px;
-    border: 2px solid var(--border-color);
-    border-radius: 12px;
-    font-size: 1.1rem;
-    margin-bottom: 15px;
-    box-sizing: border-box;
-}
-
-.login-box input:focus {
-    outline: none;
-    border-color: var(--primary-green);
-}
-
-.login-box button {
-    width: 100%;
-    padding: 14px;
-    background: var(--primary-green);
-    color: var(--text-light);
-    border: none;
-    border-radius: 12px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-.login-box button:hover {
-    background: var(--primary-green-dark);
-}
-
-.login-box .error {
-    color: var(--primary-red);
-    margin-top: 10px;
-    font-weight: 600;
-    min-height: 30px;
-}
-
-.login-box .admin-hint {
-    margin-top: 15px;
-    padding: 10px;
-    background: var(--bg-card);
-    border-radius: 8px;
-    font-size: 0.8rem;
-    color: var(--text-muted);
-}
-
-/* ===== ADMIN-PANEL ===== */
-.admin-panel {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1000;
-}
-
-.admin-toggle {
-    background: var(--primary-green);
-    color: var(--text-light);
-    border: none;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    font-size: 1.5rem;
-    cursor: pointer;
-    box-shadow: 0 4px 15px var(--shadow-color);
-    transition: transform 0.3s;
-}
-
-.admin-toggle:hover {
-    transform: scale(1.1);
-}
-
-.admin-modal {
-    position: fixed;
-    bottom: 80px;
-    right: 20px;
-    background: var(--bg-arena);
-    padding: 25px;
-    border-radius: 16px;
-    box-shadow: 0 10px 40px var(--shadow-color);
-    width: 320px;
-    display: none;
-    z-index: 1001;
-}
-
-.admin-modal.active {
-    display: block;
-}
-
-.admin-modal h3 {
-    color: var(--primary-green);
-    margin-bottom: 15px;
-}
-
-.admin-modal label {
-    display: block;
-    font-weight: 600;
-    margin: 10px 0 5px;
-    color: var(--text-dark);
-}
-
-.admin-modal input,
-.admin-modal select {
-    width: 100%;
-    padding: 10px;
-    border: 2px solid var(--border-color);
-    border-radius: 8px;
-    font-size: 1rem;
-    box-sizing: border-box;
-    background: var(--bg-arena);
-    color: var(--text-dark);
-}
-
-.admin-modal button {
-    margin-top: 15px;
-    padding: 10px 20px;
-    background: var(--primary-green);
-    color: var(--text-light);
-    border: none;
-    border-radius: 8px;
-    font-weight: 700;
-    cursor: pointer;
-    width: 100%;
-}
-
-.admin-modal button:hover {
-    background: var(--primary-green-dark);
-}
-
-.admin-modal .current-pw {
-    margin-top: 10px;
-    padding: 8px;
-    background: var(--bg-card);
-    border-radius: 6px;
-    font-size: 0.9rem;
-    color: var(--text-muted);
-}
-
-/* ===== ORIGINAL STYLES ===== */
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+    height: 100%;
+    height: 100dvh;
+    overflow: hidden;
 }
 
 body{
     font-family:Segoe UI,Arial,sans-serif;
-    background: linear-gradient(135deg, var(--bg-body-start), var(--bg-body-end));
-    color: var(--text-dark);
-    height:100vh;
-    overflow:hidden;
-}
-
-#app-content {
-    display: none;
-    height: 100vh;
-}
-
-#app-content.visible {
+    background:linear-gradient(135deg,#17351f,#0d1f13);
+    color:#222;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .header{
-    position:sticky;
-    top:0;
-    z-index:1000;
-    background: var(--bg-header);
-    color: var(--text-light);
+    position: sticky;
+    top: 0;
+    z-index: 500;
+    background:var(--green);
+    color:white;
     padding:14px;
     display:flex;
     justify-content:space-between;
     align-items:center;
     flex-wrap:wrap;
     gap:12px;
+    flex-shrink:0;
 }
 
 .header h1{
@@ -268,42 +70,44 @@ input{
     border-radius:12px;
     padding:10px 14px;
     font-size:1rem;
+    touch-action: manipulation;
 }
 
 button{
     cursor:pointer;
-    background: var(--primary-green);
-    color: var(--text-light);
+    background:var(--green);
+    color:white;
     font-weight:700;
-    transition: background 0.3s;
+    touch-action: manipulation;
+    transition: transform 0.1s;
 }
 
-button:hover {
-    background: var(--primary-green-dark);
+button:active {
+    transform: scale(0.95);
 }
 
 .layout{
-    display:flex;
-    justify-content:center;
-    padding:16px;
     flex: 1;
-    overflow:hidden;
+    padding:16px;
+    overflow: hidden;
+    min-height: 0;
 }
 
 .arena{
     width:100%;
     max-width:1200px;
-    background: var(--bg-arena);
+    height:100%;
+    background:white;
     border-radius:22px;
     overflow:hidden;
-    box-shadow:0 10px 30px var(--shadow-color);
+    box-shadow:0 10px 30px rgba(0,0,0,.3);
     display:flex;
     flex-direction:column;
-    height:100%;
+    margin: 0 auto;
 }
 
 .arena-header{
-    background: var(--bg-card);
+    background:var(--light);
     padding:12px 16px;
     display:flex;
     justify-content:space-between;
@@ -316,7 +120,7 @@ button:hover {
 .arena-title{
     font-size:1.6rem;
     font-weight:900;
-    color: var(--text-green);
+    color:var(--green);
     text-align:center;
     flex:1;
 }
@@ -330,31 +134,33 @@ button:hover {
 
 .team-name-edit input {
     padding: 6px 12px;
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--border);
     border-radius: 8px;
     font-size: 0.9rem;
     font-weight: 700;
     width: 140px;
     transition: border-color 0.3s;
+    background: white;
+    color: #222;
 }
 
 .team-name-edit input:focus {
     outline: none;
-    border-color: var(--primary-green);
-}
-
-.team-name-edit .team-e-input {
-    color: var(--team-e-color);
+    border-color: var(--green);
 }
 
 .team-name-edit .team-w-input {
-    color: var(--team-w-color);
+    color: var(--red);
+}
+
+.team-name-edit .team-e-input {
+    color: var(--green);
 }
 
 .team-name-edit label {
     font-size: 0.85rem;
     font-weight: 600;
-    color: var(--text-muted);
+    color: #555;
 }
 
 .scoreboard{
@@ -366,61 +172,58 @@ button:hover {
 }
 
 .score-card{
-    background: var(--bg-card);
+    background:#f7faf5;
     border-radius:18px;
-    padding:16px;
+    padding:16px 20px;
     text-align:center;
-    border-bottom:8px solid var(--team-e-color);
+    border-bottom:8px solid var(--green);
+    display:flex;
+    justify-content:center;
+    align-items:center;
 }
 
 .score-card.red{
-    border-bottom-color: var(--team-w-color);
+    border-bottom-color:var(--red);
+}
+
+.team-info{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:2px;
 }
 
 .team-name{
     font-size:1.2rem;
     font-weight:900;
-    margin-bottom:10px;
-    color: var(--text-dark);
 }
 
 .team-score{
     font-size:3.4rem;
     font-weight:900;
-    color: var(--text-green);
+    color:var(--green);
+    line-height:1;
 }
 
-.team-points{
-    margin-top:10px;
-    font-weight:700;
-    color: var(--text-dark);
+.score-card.red .team-score{
+    color:var(--red);
 }
 
-.team-points span{
-    display:inline-block;
-    margin-top:6px;
-    background: var(--primary-dark);
-    color: var(--text-light);
+.team-wins{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:var(--dark);
+    color:white;
     padding:6px 16px;
     border-radius:10px;
+    font-weight:700;
     font-size:1.2rem;
+    white-space:nowrap;
 }
 
-.info-bar{
-    display:flex;
-    justify-content:center;
-    gap:10px;
-    flex-wrap:wrap;
-    padding:0 14px 14px;
-    flex-shrink:0;
-}
-
-.info-box{
-    background: var(--bg-card);
-    padding:8px 14px;
-    border-radius:12px;
-    font-weight:800;
-    color: var(--text-dark);
+.team-wins span{
+    font-size:1.4rem;
 }
 
 .kehren-wrapper{
@@ -428,6 +231,9 @@ button:hover {
     overflow-y:auto;
     padding:0 14px 14px;
     min-height:0;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
 }
 
 .kehren-wrapper::-webkit-scrollbar{
@@ -435,17 +241,17 @@ button:hover {
 }
 
 .kehren-wrapper::-webkit-scrollbar-track{
-    background: var(--bg-card);
+    background:#f0f0f0;
     border-radius:10px;
 }
 
 .kehren-wrapper::-webkit-scrollbar-thumb{
-    background: var(--primary-green);
+    background:var(--green);
     border-radius:10px;
 }
 
 .kehren-wrapper::-webkit-scrollbar-thumb:hover{
-    background: var(--primary-green-dark);
+    background:#0d3d22;
 }
 
 .kehren{
@@ -458,7 +264,6 @@ button:hover {
     text-align:center;
     font-weight:900;
     margin-bottom:8px;
-    color: var(--text-dark);
 }
 
 .kehre-row{
@@ -466,84 +271,118 @@ button:hover {
     grid-template-columns:90px 1fr 45px;
     gap:8px;
     align-items:center;
-    background: var(--bg-arena);
-    border:1px solid var(--border-color);
+    background:white;
+    border:2px solid var(--border);
     border-radius:14px;
     padding:8px;
     margin-bottom:8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+.kehre-row:active {
+    transform: scale(0.98);
 }
 
 .kehre-row.active{
     border:3px solid #4caf50;
-    background: var(--bg-active);
+    background:#f3fff2;
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.2);
 }
 
 .kehre-row.completed{
     border:3px solid #ff9800;
-    background: var(--bg-completed);
+    background:#fff8e1;
 }
 
 .kehre-number{
     font-size:.9rem;
     font-weight:900;
-    color: var(--text-dark);
+    text-align:center;
 }
 
 .points{
     display:flex;
-    gap:5px;
+    gap:6px;
     justify-content:center;
     flex-wrap:wrap;
 }
 
 .point-btn{
-    min-width:34px;
-    min-height:34px;
-    border-radius:8px;
-    border:2px solid var(--border-color);
-    background: var(--bg-arena);
-    color: var(--text-dark);
+    width:44px;
+    height:44px;
+    border-radius:10px;
+    border:2px solid var(--border);
+    background:white;
+    color:black;
     font-weight:900;
-    transition: all 0.2s;
-    cursor: pointer;
+    font-size:16px;
+    touch-action: manipulation;
+    transition: all 0.15s;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 }
 
-.point-btn:hover{
-    background: var(--primary-green);
-    color: var(--text-light);
-    transform: scale(1.05);
+.point-btn:active {
+    transform: scale(0.92);
+    background:var(--green);
+    color:white;
 }
 
 .point-btn.active-point{
-    background: var(--primary-green);
-    color: var(--text-light);
-    border-color: var(--primary-green);
+    background:var(--green);
+    color:white;
+    border-color:var(--green);
 }
 
 .kehre-value{
     text-align:center;
     font-weight:900;
     font-size:1.1rem;
-    color: var(--text-dark);
 }
 
 .footer{
+    position: sticky;
+    bottom: 0;
+    z-index: 100;
     display:flex;
     justify-content:center;
+    align-items:center;
     gap:10px;
     flex-wrap:wrap;
     padding:14px;
-    border-top:1px solid var(--border-color);
+    border-top:1px solid var(--border);
     flex-shrink:0;
+    background: white;
+}
+
+.footer .footer-left {
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:center;
+}
+
+.footer .footer-right {
+    font-size:0.85rem;
+    color:#555;
+    background:var(--light);
+    padding:4px 14px;
+    border-radius:30px;
+    font-weight:500;
+    letter-spacing:0.3px;
+    margin-left:20px;
 }
 
 .gold{
-    background: var(--primary-gold);
-    color: var(--text-dark);
+    background:var(--gold);
+    color:black;
 }
 
-.gold:hover {
-    background: #f5d47a;
+.gold:active{
+    background:#f0c860;
 }
 
 .toast{
@@ -551,13 +390,15 @@ button:hover {
     bottom:20px;
     left:50%;
     transform:translateX(-50%);
-    background: var(--primary-dark);
-    color: var(--text-light);
+    background:#111;
+    color:white;
     padding:14px 20px;
     border-radius:14px;
     opacity:0;
     transition:.3s;
     z-index:9999;
+    pointer-events: none;
+    font-size:1rem;
 }
 
 .toast.show{
@@ -576,56 +417,314 @@ button:hover {
 .player-selector label{
     font-weight:600;
     font-size:0.9rem;
-    color: var(--text-light);
 }
 
 .player-selector select{
-    background: var(--bg-arena);
-    color: var(--text-dark);
+    background:white;
+    color:black;
     padding:6px 10px;
     border-radius:30px;
     font-weight:700;
 }
 
-.point-info {
-    background: rgba(255,255,255,0.1);
-    padding: 4px 14px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    white-space: nowrap;
-    color: var(--text-light);
+/* Dialog für Kehrenauswahl */
+.kehren-dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    touch-action: manipulation;
 }
 
-.fixed-team{
-    background: var(--bg-card);
-    border-radius:30px;
-    padding:2px 12px;
-    font-weight:800;
-    color: var(--text-dark);
-    display:inline-block;
+.kehren-dialog-overlay.show {
+    display: flex;
+}
+
+.kehren-dialog {
+    background: white;
+    border-radius: 22px;
+    padding: 30px;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    touch-action: manipulation;
+}
+
+.kehren-dialog h3 {
+    margin-bottom: 16px;
+    color: var(--green);
+    font-size: 1.4rem;
+}
+
+.kehren-dialog select {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+    min-height: 50px;
+    touch-action: manipulation;
+}
+
+.kehren-dialog .dialog-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.kehren-dialog .dialog-buttons button {
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 700;
+    min-height: 50px;
+    min-width: 90px;
+    touch-action: manipulation;
+}
+
+.kehren-dialog .dialog-buttons .btn-cancel {
+    background: #ccc;
+    color: #333;
+}
+
+.kehren-dialog .dialog-buttons .btn-confirm {
+    background: var(--red);
+    color: white;
+}
+
+/* ===== LOGIN OVERLAY ===== */
+.login-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #17351f, #0d1f13);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+    transition: opacity 0.5s;
+}
+
+.login-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.login-box {
+    background: white;
+    padding: 40px;
+    border-radius: 30px;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    text-align: center;
+}
+
+.login-box h1 {
+    color: var(--green);
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.login-box .subtitle {
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.login-box input {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+.login-box input:focus {
+    outline: none;
+    border-color: var(--green);
+}
+
+.login-box button {
+    width: 100%;
+    padding: 14px;
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.login-box button:hover {
+    background: #0d3d22;
+}
+
+.login-box .error {
+    color: var(--red);
+    margin-top: 10px;
+    font-weight: 600;
+    min-height: 30px;
+}
+
+.login-box .admin-hint {
+    margin-top: 15px;
+    padding: 10px;
+    background: #f7faf5;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+/* ===== ADMIN PANEL ===== */
+.admin-panel {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.admin-toggle {
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: transform 0.3s;
+}
+
+.admin-toggle:hover {
+    transform: scale(1.1);
+}
+
+.admin-modal {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    background: white;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    width: 320px;
+    display: none;
+    z-index: 1001;
+}
+
+.admin-modal.active {
+    display: block;
+}
+
+.admin-modal h3 {
+    color: var(--green);
+    margin-bottom: 15px;
+}
+
+.admin-modal label {
+    display: block;
+    font-weight: 600;
+    margin: 10px 0 5px;
+    color: #222;
+}
+
+.admin-modal input {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.admin-modal button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+}
+
+.admin-modal button:hover {
+    background: #0d3d22;
+}
+
+.admin-modal .current-pw {
+    margin-top: 10px;
+    padding: 8px;
+    background: #f7faf5;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.admin-modal .error {
+    color: var(--red);
+    margin-top: 10px;
+    font-size: 0.9rem;
+    min-height: 20px;
 }
 
 /* ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
-    .kehre-row {
-        grid-template-columns: 70px 1fr 35px;
-        padding: 6px;
-        gap: 5px;
+@media (max-width: 900px) {
+    .scoreboard {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    .kehren {
+        grid-template-columns: 1fr;
+        gap: 10px;
     }
     
     .point-btn {
-        min-width: 28px;
-        min-height: 28px;
-        font-size: 0.8rem;
-    }
-    
-    .header h1 {
-        font-size: 1.2rem;
+        width: 58px;
+        height: 58px;
+        font-size: 22px;
+        border-radius: 12px;
     }
     
     .team-score {
-        font-size: 2.5rem;
+        font-size: 4rem;
+    }
+    
+    .kehre-row {
+        grid-template-columns: 80px 1fr 50px;
+        padding: 10px;
+        border-radius: 16px;
+    }
+    
+    .kehre-number {
+        font-size: 1rem;
+    }
+    
+    .kehre-value {
+        font-size: 1.3rem;
+    }
+    
+    .header h1 {
+        font-size: 1.3rem;
+    }
+    
+    .footer .footer-right {
+        margin-left: 0;
     }
     
     .team-name-edit input {
@@ -638,6 +737,34 @@ button:hover {
         align-items: stretch;
     }
 }
+
+@media (max-width: 600px) {
+    .point-btn {
+        width: 48px;
+        height: 48px;
+        font-size: 18px;
+    }
+    
+    .kehre-row {
+        grid-template-columns: 60px 1fr 40px;
+        padding: 6px;
+        gap: 4px;
+    }
+    
+    .team-score {
+        font-size: 3rem;
+    }
+    
+    .header h1 {
+        font-size: 1.1rem;
+    }
+    
+    .header-controls select,
+    .header-controls button {
+        padding: 6px 10px;
+        font-size: 0.85rem;
+    }
+}
 </style>
 </head>
 <body>
@@ -645,7 +772,7 @@ button:hover {
 <!-- ===== LOGIN OVERLAY ===== -->
 <div class="login-overlay" id="loginOverlay">
     <div class="login-box">
-        <h1>🥌 ESV Melktal</h1>
+        <h1>🎯 Stockschützen Trainingssystem</h1>
         <div class="subtitle">Trainingssystem</div>
         
         <input type="password" id="passwordInput" placeholder="Passwort eingeben..." autofocus>
@@ -665,52 +792,42 @@ button:hover {
     
     <div class="admin-modal" id="adminModal">
         <h3>⚙️ Admin-Panel</h3>
-        <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:15px;">Hier kannst du Einstellungen anpassen</p>
-        
-        <label>Maximale Punkte pro Kehre</label>
-        <select id="maxPointsSelect">
-            <option value="3">3 Punkte (für 3 Spieler)</option>
-            <option value="4" selected>4 Punkte (für 4 Spieler)</option>
-            <option value="5">5 Punkte (für 5 Spieler)</option>
-            <option value="6">6 Punkte (für 6 Spieler)</option>
-            <option value="7">7 Punkte (Training)</option>
-        </select>
+        <p style="color:#666;font-size:0.9rem;margin-bottom:15px;">Passwort ändern</p>
         
         <label>Aktuelles Passwort</label>
         <input type="password" id="currentPasswordInput" placeholder="Aktuelles Passwort">
         
         <label>Neues Passwort</label>
-        <input type="password" id="newPasswordInput" placeholder="Neues Passwort">
+        <input type="password" id="newPasswordInput" placeholder="Neues Passwort (min. 4 Zeichen)">
         
         <label>Neues Passwort bestätigen</label>
         <input type="password" id="confirmPasswordInput" placeholder="Neues Passwort bestätigen">
         
         <button onclick="changePassword()">🔑 Passwort ändern</button>
         
-        <div class="error" id="adminError" style="margin-top:10px;font-size:0.9rem;"></div>
+        <div class="error" id="adminError"></div>
         <div class="current-pw" id="currentPwDisplay">Aktuelles Passwort: ********</div>
     </div>
 </div>
 
-<!-- ===== APP CONTENT ===== -->
-<div id="app-content">
+<!-- ===== MAIN APP CONTENT ===== -->
+<div id="app-content" style="display:none; flex-direction:column; height:100vh;">
     <div class="header">
-        <h1>🥌 ESV Melktal – Trainingssystem</h1>
+        <h1>🎯 Stockschützen Trainingssystem</h1>
 
         <div class="header-controls">
             <div class="player-selector">
-                <label for="playerCount">👥 Spieler</label>
+                <label for="playerCount">👥</label>
                 <select id="playerCount">
-                    <option value="3">3</option>
-                    <option value="4" selected>4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
+                    <option value="3">3 Spieler</option>
+                    <option value="4"selected>4 Spieler</option>
+                    <option value="5">5 Spieler</option>
+                    <option value="6">6 Spieler</option>
                 </select>
             </div>
 
             <select id="gamesSelect">
-                <option value="2" selected>2 Siege</option>
+                <option value="2"selected>2 Siege</option>
                 <option value="3">3 Siege</option>
                 <option value="4">4 Siege</option>
                 <option value="5">5 Siege</option>
@@ -723,45 +840,53 @@ button:hover {
                 <option value="8">8 Kehren</option>
             </select>
 
-            <span class="point-info" id="pointInfo">⭐ Max: 4 Pkt</span>
-
-            <button onclick="openSpectatorWindow()">📺 Zuschauer-Monitor</button>
-            <button onclick="fullReset()">🆕 Reset</button>
-            <button onclick="logout()" style="background:var(--primary-red);">🚪 Logout</button>
+            <button onclick="fullReset()" style="background:#b93a32;">↺</button>
         </div>
     </div>
 
     <div class="layout" id="layout"></div>
 </div>
 
+<!-- Dialog für Kehrenauswahl -->
+<div class="kehren-dialog-overlay" id="kehrenDialog" onclick="closeKehrenDialog(event)">
+    <div class="kehren-dialog" onclick="event.stopPropagation();">
+        <h3>Kehre löschen</h3>
+        <p style="margin-bottom:12px;color:#666;">Wählen Sie die zu löschende Kehre:</p>
+        <select id="kehrenSelectDialog"></select>
+        <div class="dialog-buttons">
+            <button class="btn-cancel" onclick="closeKehrenDialog()">Abbrechen</button>
+            <button class="btn-confirm" onclick="confirmDeleteKehre()">Löschen</button>
+        </div>
+    </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-// ===== SPEICHER-SYSTEM FÜR TEAMNAMEN =====
+// ===== TEAM-NAMEN SPEICHER (neu) =====
 const TEAM_NAMES_KEY = 'esv_grein_team_names';
 
 function getTeamNames() {
     let names = localStorage.getItem(TEAM_NAMES_KEY);
     if (!names) {
         names = JSON.stringify({
-            teamA: 'Mannschaft E',
-            teamB: 'Mannschaft W'
+            teamW: 'Mannschaft W',
+            teamE: 'Mannschaft E'
         });
         localStorage.setItem(TEAM_NAMES_KEY, names);
     }
     return JSON.parse(names);
 }
 
-function saveTeamNames(teamA, teamB) {
+function saveTeamNames(teamW, teamE) {
     localStorage.setItem(TEAM_NAMES_KEY, JSON.stringify({
-        teamA: teamA,
-        teamB: teamB
+        teamW: teamW,
+        teamE: teamE
     }));
 }
 
 // ===== PASSWORT-SYSTEM =====
 const STORAGE_KEY = 'esv_grein_password';
-const MAX_POINTS_KEY = 'esv_grein_max_points';
 
 function getStoredPassword() {
     let pw = localStorage.getItem(STORAGE_KEY);
@@ -772,25 +897,6 @@ function getStoredPassword() {
     return pw;
 }
 
-function getMaxPoints() {
-    let max = localStorage.getItem(MAX_POINTS_KEY);
-    if (!max) {
-        max = '4';
-        localStorage.setItem(MAX_POINTS_KEY, max);
-    }
-    return parseInt(max);
-}
-
-function setMaxPoints(value) {
-    localStorage.setItem(MAX_POINTS_KEY, value.toString());
-    document.getElementById('maxPointsSelect').value = value;
-    updatePointInfo(value);
-}
-
-function updatePointInfo(maxPoints) {
-    document.getElementById('pointInfo').textContent = `⭐ Max: ${maxPoints} Pkt`;
-}
-
 function checkPassword() {
     const input = document.getElementById('passwordInput');
     const error = document.getElementById('loginError');
@@ -798,14 +904,12 @@ function checkPassword() {
     
     if (input.value === storedPw) {
         document.getElementById('loginOverlay').classList.add('hidden');
-        document.getElementById('app-content').classList.add('visible');
+        document.getElementById('app-content').style.display = 'flex';
         error.textContent = '';
         input.value = '';
         input.blur();
         updateCurrentPasswordDisplay();
-        document.getElementById('maxPointsSelect').value = getMaxPoints();
-        updatePointInfo(getMaxPoints());
-        syncPlayerCountWithMaxPoints();
+        render();
     } else {
         error.textContent = '❌ Falsches Passwort! Bitte versuche es erneut.';
         input.value = '';
@@ -816,7 +920,7 @@ function checkPassword() {
 
 function logout() {
     document.getElementById('loginOverlay').classList.remove('hidden');
-    document.getElementById('app-content').classList.remove('visible');
+    document.getElementById('app-content').style.display = 'none';
     document.getElementById('passwordInput').value = '';
     document.getElementById('passwordInput').focus();
     document.getElementById('loginError').textContent = '';
@@ -840,7 +944,6 @@ function toggleAdminModal() {
         document.getElementById('adminError').textContent = '';
     } else {
         updateCurrentPasswordDisplay();
-        document.getElementById('maxPointsSelect').value = getMaxPoints();
     }
 }
 
@@ -856,11 +959,8 @@ function changePassword() {
     const newPw = document.getElementById('newPasswordInput').value;
     const confirmPw = document.getElementById('confirmPasswordInput').value;
     const error = document.getElementById('adminError');
-    const maxPoints = document.getElementById('maxPointsSelect').value;
     
     const storedPw = getStoredPassword();
-    
-    setMaxPoints(parseInt(maxPoints));
     
     if (currentPw !== storedPw) {
         error.textContent = '❌ Aktuelles Passwort ist falsch!';
@@ -891,8 +991,6 @@ function changePassword() {
     document.getElementById('confirmPasswordInput').value = '';
     
     updateCurrentPasswordDisplay();
-    updatePointInfo(parseInt(maxPoints));
-    syncPlayerCountWithMaxPoints();
     
     setTimeout(() => {
         error.textContent = '';
@@ -901,138 +999,135 @@ function changePassword() {
     }, 3000);
 }
 
-// ===== SYNC-FUNKTION =====
-function syncPlayerCountWithMaxPoints() {
-    const maxPoints = getMaxPoints();
-    const playerSelect = document.getElementById('playerCount');
-    playerSelect.value = maxPoints;
-    state.playerCount = maxPoints;
-    state.maxPoints = maxPoints;
-    render();
-    toast(`👥 ${maxPoints} Spieler – Max. ${maxPoints} Punkte pro Kehre`);
-}
-
-// ===== ORIGINAL APP CODE =====
+// ===== APP STATE =====
 const state = {
-    kehren:6,
-    winsToChampion:2,
-    playerCount:4,
-    maxPoints:4,
-    arena:createArena(1)
+    kehren: 6,
+    winsToChampion: 2,
+    playerCount: 4,
+    arena: createArena(1)
 };
 
-function createArena(id){
+function createArena(id) {
     const names = getTeamNames();
     return {
         id,
-        teamA: names.teamA,
-        teamB: names.teamB,
-        pointsA:Array(8).fill(null),
-        pointsB:Array(8).fill(null),
-        winsA:0,
-        winsB:0
+        teamW: names.teamW,
+        teamE: names.teamE,
+        pointsW: Array(6).fill(null),
+        pointsE: Array(6).fill(null),
+        winsW: 0,
+        winsE: 0
     };
 }
 
-function render(){
+function render() {
+    const appContent = document.getElementById('app-content');
+    if (appContent.style.display !== 'flex') return;
     document.getElementById('layout').innerHTML = renderArena(state.arena);
-    updateSpectatorWindow();
-    updatePointInfo(getMaxPoints());
+    scrollToActiveKehre();
     
-    // Team-Namen in den Input-Feldern anzeigen
+    // Team-Namen in Input-Felder setzen
     const names = getTeamNames();
-    document.getElementById('teamAInput').value = names.teamA;
-    document.getElementById('teamBInput').value = names.teamB;
+    document.getElementById('teamWInput').value = names.teamW;
+    document.getElementById('teamEInput').value = names.teamE;
 }
 
-function renderArena(arena){
-    const scoreA = sum(arena.pointsA);
-    const scoreB = sum(arena.pointsB);
-    const maxPoints = getMaxPoints();
+function renderArena(arena) {
+    const scoreW = sum(arena.pointsW);
+    const scoreE = sum(arena.pointsE);
     const names = getTeamNames();
 
     return `
     <div class="arena">
         <div class="arena-header">
-            <div class="arena-title">🥌 ESV Melktal – Training</div>
+            <div class="arena-title">Stockschützen Trainingssystem</div>
             <div class="team-name-edit">
                 <div>
                     <label>⚪ Team 1</label>
-                    <input type="text" id="teamAInput" class="team-e-input" 
-                           value="${names.teamA}" 
-                           onchange="updateTeamName('A', this.value)"
-                           placeholder="Team E Name">
+                    <input type="text" id="teamWInput" class="team-w-input" 
+                           value="${names.teamW}" 
+                           onchange="updateTeamName('W', this.value)"
+                           placeholder="Team W Name">
                 </div>
                 <div>
                     <label>🔴 Team 2</label>
-                    <input type="text" id="teamBInput" class="team-w-input" 
-                           value="${names.teamB}" 
-                           onchange="updateTeamName('B', this.value)"
-                           placeholder="Team W Name">
+                    <input type="text" id="teamEInput" class="team-e-input" 
+                           value="${names.teamE}" 
+                           onchange="updateTeamName('E', this.value)"
+                           placeholder="Team E Name">
                 </div>
             </div>
         </div>
 
         <div class="scoreboard">
-            <div class="score-card">
-                <div class="team-name">⚪ ${names.teamA}</div>
-                <div class="team-score">${scoreA}</div>
-                <div class="team-points">
-                    Gewonnene Spiele<br>
-                    <span>${arena.winsA}</span>
+            <div class="score-card red">
+                <div class="team-info">
+                    <div class="team-name">⚪ ${names.teamW}</div>
+                    <div class="team-score">${scoreW}</div>
+                </div>
+                <div class="team-wins">
+                    <span>🏆</span> ${arena.winsW}
                 </div>
             </div>
 
-            <div class="score-card red">
-                <div class="team-name">🔴 ${names.teamB}</div>
-                <div class="team-score">${scoreB}</div>
-                <div class="team-points">
-                    Gewonnene Spiele<br>
-                    <span>${arena.winsB}</span>
+            <div class="score-card">
+                <div class="team-info">
+                    <div class="team-name">🔴 ${names.teamE}</div>
+                    <div class="team-score">${scoreE}</div>
+                </div>
+                <div class="team-wins">
+                    <span>🏆</span> ${arena.winsE}
                 </div>
             </div>
         </div>
 
-        <div class="kehren-wrapper">
+        <div class="kehren-wrapper" id="kehrenWrapper">
             <div class="kehren">
                 <div>
-                    <div class="kehren-title">⚪ ${names.teamA}</div>
-                    ${renderKehren(arena,'A')}
+                    <div class="kehren-title">⚪ ${names.teamW}</div>
+                    ${renderKehren(arena, 'W')}
                 </div>
-
                 <div>
-                    <div class="kehren-title">🔴 ${names.teamB}</div>
-                    ${renderKehren(arena,'B')}
+                    <div class="kehren-title">🔴 ${names.teamE}</div>
+                    ${renderKehren(arena, 'E')}
                 </div>
             </div>
         </div>
 
         <div class="footer">
-            <button class="gold" onclick="evaluateGame()">🏆 Spiel manuell werten</button>
-            <button onclick="resetCurrent()">🔄 Kehren löschen</button>
+            <div class="footer-left">
+                <button class="gold" onclick="evaluateGame()">Spiel Werten</button>
+                <button onclick="resetGame()">Neues Spiel Starten</button>
+                <button onclick="openKehrenDialog()">Kehre Löschen</button>
+                <button onclick="logout()" style="background:var(--red);">🚪 Logout</button>
+            </div>
+            <div class="footer-right">@Roland Koll Version 1.2</div>
         </div>
     </div>
     `;
 }
 
-function renderKehren(arena,team){
-    let html='';
-    const arr = team==='A' ? arena.pointsA : arena.pointsB;
-    const maxPoints = getMaxPoints();
-    const names = getTeamNames();
+function renderKehren(arena, team) {
+    let html = '';
+    const arr = team === 'W' ? arena.pointsW : arena.pointsE;
+    const activeIndex = activeKehre(arena) - 1;
 
-    for(let i=0;i<state.kehren;i++){
-        const active = activeKehre(arena)===i+1;
+    for (let i = 0; i < state.kehren; i++) {
+        const active = activeIndex === i;
         const isCompleted = arr[i] !== null;
+        const maxPoints = state.playerCount;
 
         html += `
-        <div class="kehre-row ${active?'active':''} ${isCompleted?'completed':''}">
-            <div class="kehre-number">Kehre ${i+1}</div>
+        <div class="kehre-row ${active ? 'active' : ''} ${isCompleted ? 'completed' : ''}" 
+             data-kehre="${i}" 
+             data-team="${team}"
+             onclick="handleKehreClick(${i}, '${team}')">
+            <div class="kehre-number">${i + 1}</div>
             <div class="points">
                 ${Array.from({length: maxPoints + 1}, (_, v) => `
-                    <button
-                        class="point-btn ${arr[i] === v ? 'active-point' : ''}"
-                        onclick="setPoints('${team}',${i},${v})">
+                    <button class="point-btn ${arr[i] === v ? 'active-point' : ''}"
+                            onclick="event.stopPropagation(); setPoints('${team}', ${i}, ${v})"
+                            data-value="${v}">
                         ${v}
                     </button>
                 `).join('')}
@@ -1045,328 +1140,265 @@ function renderKehren(arena,team){
     return html;
 }
 
-// ===== TEAM-NAMEN AKTUALISIEREN =====
+// ===== TEAM-NAMEN AKTUALISIEREN (neu) =====
 function updateTeamName(team, newName) {
     const names = getTeamNames();
+    const trimmed = newName.trim() || (team === 'W' ? 'Mannschaft W' : 'Mannschaft E');
     
-    if (team === 'A') {
-        names.teamA = newName || 'Mannschaft E';
-        state.arena.teamA = names.teamA;
+    if (team === 'W') {
+        names.teamW = trimmed;
+        state.arena.teamW = trimmed;
     } else {
-        names.teamB = newName || 'Mannschaft W';
-        state.arena.teamB = names.teamB;
+        names.teamE = trimmed;
+        state.arena.teamE = trimmed;
     }
     
-    saveTeamNames(names.teamA, names.teamB);
+    saveTeamNames(names.teamW, names.teamE);
     render();
-    toast(`✅ Teamname geändert: ${team === 'A' ? names.teamA : names.teamB}`);
+    toast(`✅ Teamname geändert: ${trimmed}`);
 }
 
-function setPoints(team,index,value){
+function setPoints(team, index, value) {
     const arena = state.arena;
 
-    if(hasWinner(arena)){
+    if (hasWinner(arena)) {
         toast('Training beendet');
         return;
     }
 
-    if(team==='A'){
-        arena.pointsA[index]=value;
-        if(arena.pointsB[index]===null) arena.pointsB[index]=0;
-    }else{
-        arena.pointsB[index]=value;
-        if(arena.pointsA[index]===null) arena.pointsA[index]=0;
+    if (team === 'W') {
+        arena.pointsW[index] = value;
+    } else {
+        arena.pointsE[index] = value;
     }
 
     render();
-
-    if(allKehrenFilled(arena)){
-        setTimeout(() => {
-            autoEvaluateGame();
-        }, 300);
-    }
 }
 
-function allKehrenFilled(arena){
-    for(let i=0;i<state.kehren;i++){
-        if(arena.pointsA[i]===null || arena.pointsB[i]===null){
-            return false;
-        }
-    }
-    return true;
-}
-
-function autoEvaluateGame(){
+function handleKehreClick(index, team) {
     const arena = state.arena;
-    const names = getTeamNames();
-
-    if(hasWinner(arena)){
+    if (hasWinner(arena)) {
+        toast('Training beendet');
         return;
     }
 
-    const a = sum(arena.pointsA);
-    const b = sum(arena.pointsB);
-
-    if(a>b){
-        arena.winsA++;
-        toast(`⚪ ${names.teamA} gewinnt das Spiel (${a}:${b})`);
-    }
-    else if(b>a){
-        arena.winsB++;
-        toast(`🔴 ${names.teamB} gewinnt das Spiel (${a}:${b})`);
-    }
-    else{
-        toast(`Unentschieden (${a}:${b})`);
+    const hasValue = arena.pointsW[index] !== null || arena.pointsE[index] !== null;
+    if (!hasValue) {
+        toast(`Kehre ${index + 1} ist bereits leer`);
+        return;
     }
 
-    arena.pointsA = Array(state.kehren).fill(null);
-    arena.pointsB = Array(state.kehren).fill(null);
+    openKehrenDialog(index);
+}
 
-    if(hasWinner(arena)){
+function scrollToActiveKehre() {
+    setTimeout(() => {
+        const wrapper = document.getElementById('kehrenWrapper');
+        if (!wrapper) return;
+
+        const activeRow = wrapper.querySelector('.kehre-row.active');
+        if (activeRow) {
+            const wrapperRect = wrapper.getBoundingClientRect();
+            const rowRect = activeRow.getBoundingClientRect();
+
+            const isVisible = 
+                rowRect.top >= wrapperRect.top + 10 &&
+                rowRect.bottom <= wrapperRect.bottom - 10;
+
+            if (!isVisible) {
+                activeRow.scrollIntoView({
+                    block: 'center',
+                    behavior: 'smooth'
+                });
+            }
+        }
+    }, 50);
+}
+
+function evaluateGame() {
+    const arena = state.arena;
+    const names = getTeamNames();
+
+    if (hasWinner(arena)) {
+        toast('Training beendet');
+        return;
+    }
+
+    for (let i = 0; i < state.kehren; i++) {
+        if (arena.pointsW[i] === null || arena.pointsE[i] === null) {
+            toast('Bitte alle Kehren ausfüllen');
+            return;
+        }
+    }
+
+    const w = sum(arena.pointsW);
+    const e = sum(arena.pointsE);
+
+    if (w > e) {
+        arena.winsW++;
+        toast(`⚪ ${names.teamW} gewinnt (${w}:${e})`);
+    } else if (e > w) {
+        arena.winsE++;
+        toast(`🔴 ${names.teamE} gewinnt (${w}:${e})`);
+    } else {
+        toast(`Unentschieden (${w}:${e})`);
+    }
+
+    arena.pointsW = Array(state.kehren).fill(null);
+    arena.pointsE = Array(state.kehren).fill(null);
+
+    if (hasWinner(arena)) {
         toast(`🏆 ${winnerName(arena)} gewinnt das Training!`);
     }
 
     render();
 }
 
-function evaluateGame(){
-    const arena = state.arena;
-    const names = getTeamNames();
-
-    if(hasWinner(arena)){
-        toast('Training beendet');
-        return;
-    }
-
-    for(let i=0;i<state.kehren;i++){
-        if(arena.pointsA[i]===null || arena.pointsB[i]===null){
-            toast('Alle Kehren ausfüllen');
-            return;
-        }
-    }
-
-    const a = sum(arena.pointsA);
-    const b = sum(arena.pointsB);
-
-    if(a>b){
-        arena.winsA++;
-        toast(`⚪ ${names.teamA} gewinnt das Spiel (${a}:${b})`);
-    }
-    else if(b>a){
-        arena.winsB++;
-        toast(`🔴 ${names.teamB} gewinnt das Spiel (${a}:${b})`);
-    }
-    else{
-        toast(`Unentschieden (${a}:${b})`);
-    }
-
-    arena.pointsA = Array(state.kehren).fill(null);
-    arena.pointsB = Array(state.kehren).fill(null);
-
-    if(hasWinner(arena)){
-        toast(`🏆 ${winnerName(arena)} gewinnt das Training`);
-    }
-
-    render();
-}
-
-function activeKehre(arena){
-    for(let i=0;i<state.kehren;i++){
-        if(arena.pointsA[i]===null || arena.pointsB[i]===null){
-            return i+1;
+function activeKehre(arena) {
+    for (let i = 0; i < state.kehren; i++) {
+        if (arena.pointsW[i] === null || arena.pointsE[i] === null) {
+            return i + 1;
         }
     }
     return state.kehren;
 }
 
-function hasWinner(arena){
-    return arena.winsA >= state.winsToChampion || arena.winsB >= state.winsToChampion;
+function hasWinner(arena) {
+    return arena.winsW >= state.winsToChampion || arena.winsE >= state.winsToChampion;
 }
 
-function winnerName(arena){
+function winnerName(arena) {
     const names = getTeamNames();
-    if(arena.winsA >= state.winsToChampion) return names.teamA;
-    if(arena.winsB >= state.winsToChampion) return names.teamB;
+    if (arena.winsW >= state.winsToChampion) return names.teamW;
+    if (arena.winsE >= state.winsToChampion) return names.teamE;
     return '';
 }
 
-function sum(arr){
-    return arr.reduce((a,b)=>a+(b||0),0);
+function sum(arr) {
+    return arr.reduce((a, b) => a + (b || 0), 0);
 }
 
-function resetCurrent(){
-    state.arena.pointsA = Array(state.kehren).fill(null);
-    state.arena.pointsB = Array(state.kehren).fill(null);
+function resetGame() {
+    const arena = state.arena;
+    arena.pointsW = Array(state.kehren).fill(null);
+    arena.pointsE = Array(state.kehren).fill(null);
+    arena.winsW = 0;
+    arena.winsE = 0;
     render();
+    toast('Spiel neu gestartet');
 }
 
-function fullReset(){
-    // Beim Reset werden die Team-Namen beibehalten
+function openKehrenDialog(preSelectedIndex) {
+    const arena = state.arena;
+    if (hasWinner(arena)) {
+        toast('Training beendet');
+        return;
+    }
+
+    const dialog = document.getElementById('kehrenDialog');
+    const select = document.getElementById('kehrenSelectDialog');
+
+    select.innerHTML = '';
+    let hasValues = false;
+
+    for (let i = 0; i < state.kehren; i++) {
+        const option = document.createElement('option');
+        option.value = i;
+        const hasValue = arena.pointsW[i] !== null || arena.pointsE[i] !== null;
+        if (hasValue) hasValues = true;
+        option.textContent = `Kehre ${i + 1} ${hasValue ? '✏️' : '⬜'}`;
+        select.appendChild(option);
+    }
+
+    if (!hasValues) {
+        toast('Alle Kehren sind bereits leer');
+        return;
+    }
+
+    if (preSelectedIndex !== undefined) {
+        select.value = preSelectedIndex;
+    }
+
+    dialog.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeKehrenDialog(event) {
+    if (event && event.target !== event.currentTarget) return;
+    document.getElementById('kehrenDialog').classList.remove('show');
+    document.body.style.overflow = '';
+}
+
+function confirmDeleteKehre() {
+    const arena = state.arena;
+    const select = document.getElementById('kehrenSelectDialog');
+    const index = parseInt(select.value);
+
+    if (arena.pointsW[index] === null && arena.pointsE[index] === null) {
+        toast(`Kehre ${index + 1} ist bereits leer`);
+        closeKehrenDialog();
+        return;
+    }
+
+    arena.pointsW[index] = null;
+    arena.pointsE[index] = null;
+
+    render();
+    toast(`Kehre ${index + 1} gelöscht`);
+    closeKehrenDialog();
+}
+
+function fullReset() {
     const names = getTeamNames();
     state.arena = createArena(1);
-    state.arena.teamA = names.teamA;
-    state.arena.teamB = names.teamB;
+    state.arena.teamW = names.teamW;
+    state.arena.teamE = names.teamE;
     render();
-    toast('🔄 Training zurückgesetzt - Teamnamen bleiben erhalten');
+    toast('Kompletter Reset - Teamnamen bleiben erhalten');
 }
 
-let spectatorWindow=null;
-
-function openSpectatorWindow(){
-    spectatorWindow = window.open('','spectator','width=1920,height=1080');
-
-    spectatorWindow.document.write(`
-    <html>
-    <head>
-    <title>Zuschauer Monitor</title>
-    <style>
-    body{
-        margin:0;
-        background:#102417;
-        color:white;
-        font-family:Arial,sans-serif;
-        padding:25px;
-    }
-    .card{
-        background:white;
-        color:black;
-        border-radius:30px;
-        padding:35px;
-    }
-    .title{
-        font-size:3rem;
-        font-weight:900;
-        margin-bottom:20px;
-        color:#1f5e3a;
-    }
-    .teams{
-        display:grid;
-        grid-template-columns:1fr 1fr;
-        gap:20px;
-    }
-    .team{
-        background:#f5f8f3;
-        border-radius:24px;
-        padding:25px;
-        text-align:center;
-    }
-    .name{
-        font-size:2rem;
-        font-weight:900;
-    }
-    .score{
-        font-size:7rem;
-        font-weight:900;
-        color:#1f5e3a;
-    }
-    .wins{
-        margin-top:10px;
-        font-size:2rem;
-        font-weight:700;
-    }
-    .info-line{
-        text-align:center;
-        font-size:1.2rem;
-        margin-bottom:20px;
-        color:#555;
-    }
-    </style>
-    </head>
-    <body>
-        <div class="card" id="specGrid"></div>
-    </body>
-    </html>
-    `);
-
-    spectatorWindow.document.close();
-    updateSpectatorWindow();
-}
-
-function updateSpectatorWindow(){
-    if(!spectatorWindow || spectatorWindow.closed) return;
-
-    const arena = state.arena;
-    const grid = spectatorWindow.document.getElementById('specGrid');
-    const names = getTeamNames();
-
-    if(!grid) return;
-
-    grid.innerHTML = `
-        <div class="title">🥌 ESV Melktal – Training</div>
-        <div class="info-line">👥 ${state.playerCount} Spieler  |  🎯 ${state.kehren} Kehren  |  🏆 ${state.winsToChampion} Siege  |  ⭐ Max ${getMaxPoints()} Punkte</div>
-        <div class="teams">
-            <div class="team">
-                <div class="name">⚪ ${names.teamA}</div>
-                <div class="score">${sum(arena.pointsA)}</div>
-                <div class="wins">🏆 ${arena.winsA}</div>
-            </div>
-            <div class="team">
-                <div class="name">🔴 ${names.teamB}</div>
-                <div class="score">${sum(arena.pointsB)}</div>
-                <div class="wins">🏆 ${arena.winsB}</div>
-            </div>
-        </div>
-    `;
-}
-
-function toast(msg){
-    const t=document.getElementById('toast');
-    t.textContent=msg;
+function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
     t.classList.add('show');
-    setTimeout(()=>t.classList.remove('show'),2500);
+    clearTimeout(t._timeout);
+    t._timeout = setTimeout(() => t.classList.remove('show'), 2500);
 }
 
 // ===== EVENT-LISTENER =====
-document.getElementById('playerCount').addEventListener('change', function(e){
-    const playerCount = Number(e.target.value);
-    state.playerCount = playerCount;
-    setMaxPoints(playerCount);
-    state.maxPoints = playerCount;
-    state.arena.pointsA = Array(state.kehren).fill(null);
-    state.arena.pointsB = Array(state.kehren).fill(null);
+document.getElementById('playerCount').addEventListener('change', function(e) {
+    state.playerCount = Number(e.target.value);
     render();
-    toast(`👥 ${playerCount} Spieler – Max. ${playerCount} Punkte pro Kehre`);
+    toast(`👥 ${state.playerCount} Spieler`);
 });
 
-document.getElementById('kehrenSelect').addEventListener('change', function(e){
+document.getElementById('kehrenSelect').addEventListener('change', function(e) {
     state.kehren = Number(e.target.value);
-    state.arena.pointsA = Array(state.kehren).fill(null);
-    state.arena.pointsB = Array(state.kehren).fill(null);
+    state.arena.pointsW = Array(state.kehren).fill(null);
+    state.arena.pointsE = Array(state.kehren).fill(null);
     render();
 });
 
-document.getElementById('gamesSelect').addEventListener('change', function(e){
+document.getElementById('gamesSelect').addEventListener('change', function(e) {
     state.winsToChampion = Number(e.target.value);
     render();
 });
 
-document.getElementById('maxPointsSelect').addEventListener('change', function(e){
-    const value = parseInt(e.target.value);
-    setMaxPoints(value);
-    state.maxPoints = value;
-    document.getElementById('playerCount').value = value;
-    state.playerCount = value;
-    render();
-    toast(`⭐ Maximale Punkte auf ${value} gesetzt (${value} Spieler)`);
-});
+// ===== HÖHENKORREKTUR =====
+function setCorrectHeight() {
+    const vh = window.innerHeight;
+    document.documentElement.style.setProperty('height', vh + 'px');
+    document.body.style.setProperty('height', vh + 'px');
+}
 
-// ===== APP START =====
+window.addEventListener('resize', setCorrectHeight);
+window.addEventListener('orientationchange', function() {
+    setTimeout(setCorrectHeight, 300);
+});
+setCorrectHeight();
+
+// ===== INIT =====
 render();
-
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && document.getElementById('app-content').classList.contains('visible')) {
-        if (confirm('Möchtest du dich wirklich ausloggen?')) {
-            logout();
-        }
-    }
-});
-
-document.addEventListener('keydown', function(e) {
-    if (e.ctrlKey && e.shiftKey && e.key === 'A') {
-        e.preventDefault();
-        toggleAdminModal();
-    }
-});
 </script>
 
 </body>
