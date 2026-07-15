@@ -3,499 +3,42 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
-<title>Stockschützen Trainingsystem</title>
+<title>Stockschützen Trainingssystem</title>
 
 <style>
-:root{
-    --green:#1f5e3a;
-    --red:#b93a32;
-    --gold:#ffdf8c;
-    --dark:#102417;
-    --light:#eef5e9;
-    --border:#d7e4cf;
+:root {
+    --green: #1f5e3a;
+    --red: #b93a32;
+    --gold: #ffdf8c;
+    --dark: #102417;
+    --light: #eef5e9;
+    --border: #d7e4cf;
 }
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
 }
 
 html, body {
     height: 100%;
-    height: 100dvh;
     overflow: hidden;
+    touch-action: manipulation;
 }
 
-body{
-    font-family:Segoe UI,Arial,sans-serif;
-    background:linear-gradient(135deg,#17351f,#0d1f13);
-    color:#222;
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #17351f, #0d1f13);
+    color: #222;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-}
-
-.header{
-    position: sticky;
-    top: 0;
-    z-index: 500;
-    background:var(--green);
-    color:white;
-    padding:14px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    flex-wrap:wrap;
-    gap:12px;
-    flex-shrink:0;
-}
-
-.header h1{
-    font-size:1.6rem;
-}
-
-.header-controls{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-    align-items:center;
-}
-
-button,
-select,
-input{
-    border:none;
-    border-radius:12px;
-    padding:10px 14px;
-    font-size:1rem;
     touch-action: manipulation;
-}
-
-button{
-    cursor:pointer;
-    background:var(--green);
-    color:white;
-    font-weight:700;
-    touch-action: manipulation;
-    transition: transform 0.1s;
-}
-
-button:active {
-    transform: scale(0.95);
-}
-
-.layout{
-    flex: 1;
-    padding:16px;
-    overflow: hidden;
-    min-height: 0;
-}
-
-.arena{
-    width:100%;
-    max-width:1200px;
-    height:100%;
-    background:white;
-    border-radius:22px;
-    overflow:hidden;
-    box-shadow:0 10px 30px rgba(0,0,0,.3);
-    display:flex;
-    flex-direction:column;
-    margin: 0 auto;
-}
-
-.arena-header{
-    background:var(--light);
-    padding:12px 16px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    flex-shrink:0;
-    flex-wrap:wrap;
-    gap:10px;
-}
-
-.arena-title{
-    font-size:1.6rem;
-    font-weight:900;
-    color:var(--green);
-    text-align:center;
-    flex:1;
-}
-
-.team-name-edit {
-    display:flex;
-    gap:15px;
-    align-items:center;
-    flex-wrap:wrap;
-}
-
-.team-name-edit input {
-    padding: 6px 12px;
-    border: 2px solid var(--border);
-    border-radius: 8px;
-    font-size: 0.9rem;
-    font-weight: 700;
-    width: 140px;
-    transition: border-color 0.3s;
-    background: white;
-    color: #222;
-}
-
-.team-name-edit input:focus {
-    outline: none;
-    border-color: var(--green);
-}
-
-.team-name-edit .team-w-input {
-    color: var(--red);
-}
-
-.team-name-edit .team-e-input {
-    color: var(--green);
-}
-
-.team-name-edit label {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #555;
-}
-
-.scoreboard{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:12px;
-    padding:0 14px 14px;
-    flex-shrink:0;
-}
-
-.score-card{
-    background:#f7faf5;
-    border-radius:18px;
-    padding:16px 20px;
-    text-align:center;
-    border-bottom:8px solid var(--green);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}
-
-.score-card.red{
-    border-bottom-color:var(--red);
-}
-
-.team-info{
-    display:flex;
-    flex-direction:column;
-    align-items:flex-start;
-    gap:2px;
-}
-
-.team-name{
-    font-size:1.2rem;
-    font-weight:900;
-}
-
-.team-score{
-    font-size:3.4rem;
-    font-weight:900;
-    color:var(--green);
-    line-height:1;
-}
-
-.score-card.red .team-score{
-    color:var(--red);
-}
-
-.team-wins{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    background:var(--dark);
-    color:white;
-    padding:6px 16px;
-    border-radius:10px;
-    font-weight:700;
-    font-size:1.2rem;
-    white-space:nowrap;
-}
-
-.team-wins span{
-    font-size:1.4rem;
-}
-
-.kehren-wrapper{
-    flex:1;
-    overflow-y:auto;
-    padding:0 14px 14px;
-    min-height:0;
-    overscroll-behavior: contain;
-    -webkit-overflow-scrolling: touch;
-    touch-action: pan-y;
-}
-
-.kehren-wrapper::-webkit-scrollbar{
-    width:8px;
-}
-
-.kehren-wrapper::-webkit-scrollbar-track{
-    background:#f0f0f0;
-    border-radius:10px;
-}
-
-.kehren-wrapper::-webkit-scrollbar-thumb{
-    background:var(--green);
-    border-radius:10px;
-}
-
-.kehren-wrapper::-webkit-scrollbar-thumb:hover{
-    background:#0d3d22;
-}
-
-.kehren{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:14px;
-}
-
-.kehren-title{
-    text-align:center;
-    font-weight:900;
-    margin-bottom:8px;
-}
-
-.kehre-row{
-    display:grid;
-    grid-template-columns:90px 1fr 45px;
-    gap:8px;
-    align-items:center;
-    background:white;
-    border:2px solid var(--border);
-    border-radius:14px;
-    padding:8px;
-    margin-bottom:8px;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    touch-action: manipulation;
-}
-
-.kehre-row:active {
-    transform: scale(0.98);
-}
-
-.kehre-row.active{
-    border:3px solid #4caf50;
-    background:#f3fff2;
-    box-shadow: 0 0 20px rgba(76, 175, 80, 0.2);
-}
-
-.kehre-row.completed{
-    border:3px solid #ff9800;
-    background:#fff8e1;
-}
-
-.kehre-number{
-    font-size:.9rem;
-    font-weight:900;
-    text-align:center;
-}
-
-.points{
-    display:flex;
-    gap:6px;
-    justify-content:center;
-    flex-wrap:wrap;
-}
-
-.point-btn{
-    width:44px;
-    height:44px;
-    border-radius:10px;
-    border:2px solid var(--border);
-    background:white;
-    color:black;
-    font-weight:900;
-    font-size:16px;
-    touch-action: manipulation;
-    transition: all 0.15s;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-
-.point-btn:active {
-    transform: scale(0.92);
-    background:var(--green);
-    color:white;
-}
-
-.point-btn.active-point{
-    background:var(--green);
-    color:white;
-    border-color:var(--green);
-}
-
-.kehre-value{
-    text-align:center;
-    font-weight:900;
-    font-size:1.1rem;
-}
-
-.footer{
-    position: sticky;
-    bottom: 0;
-    z-index: 100;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:10px;
-    flex-wrap:wrap;
-    padding:14px;
-    border-top:1px solid var(--border);
-    flex-shrink:0;
-    background: white;
-}
-
-.footer .footer-left {
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-    justify-content:center;
-}
-
-.footer .footer-right {
-    font-size:0.85rem;
-    color:#555;
-    background:var(--light);
-    padding:4px 14px;
-    border-radius:30px;
-    font-weight:500;
-    letter-spacing:0.3px;
-    margin-left:20px;
-}
-
-.gold{
-    background:var(--gold);
-    color:black;
-}
-
-.gold:active{
-    background:#f0c860;
-}
-
-.toast{
-    position:fixed;
-    bottom:20px;
-    left:50%;
-    transform:translateX(-50%);
-    background:#111;
-    color:white;
-    padding:14px 20px;
-    border-radius:14px;
-    opacity:0;
-    transition:.3s;
-    z-index:9999;
-    pointer-events: none;
-    font-size:1rem;
-}
-
-.toast.show{
-    opacity:1;
-}
-
-.player-selector{
-    display:flex;
-    gap:8px;
-    align-items:center;
-    background:rgba(255,255,255,0.15);
-    padding:4px 12px 4px 8px;
-    border-radius:40px;
-}
-
-.player-selector label{
-    font-weight:600;
-    font-size:0.9rem;
-}
-
-.player-selector select{
-    background:white;
-    color:black;
-    padding:6px 10px;
-    border-radius:30px;
-    font-weight:700;
-}
-
-/* Dialog für Kehrenauswahl */
-.kehren-dialog-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.5);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 10000;
-    touch-action: manipulation;
-}
-
-.kehren-dialog-overlay.show {
-    display: flex;
-}
-
-.kehren-dialog {
-    background: white;
-    border-radius: 22px;
-    padding: 30px;
-    max-width: 400px;
-    width: 90%;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-    touch-action: manipulation;
-}
-
-.kehren-dialog h3 {
-    margin-bottom: 16px;
-    color: var(--green);
-    font-size: 1.4rem;
-}
-
-.kehren-dialog select {
-    width: 100%;
-    padding: 14px;
-    border: 2px solid var(--border);
-    border-radius: 12px;
-    font-size: 1.1rem;
-    margin-bottom: 16px;
-    min-height: 50px;
-    touch-action: manipulation;
-}
-
-.kehren-dialog .dialog-buttons {
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end;
-}
-
-.kehren-dialog .dialog-buttons button {
-    padding: 12px 24px;
-    border-radius: 12px;
-    font-weight: 700;
-    min-height: 50px;
-    min-width: 90px;
-    touch-action: manipulation;
-}
-
-.kehren-dialog .dialog-buttons .btn-cancel {
-    background: #ccc;
-    color: #333;
-}
-
-.kehren-dialog .dialog-buttons .btn-confirm {
-    background: var(--red);
-    color: white;
+    position: relative;
+    height: 100vh;
+    height: -webkit-fill-available;
 }
 
 /* ===== HILFE / BEDIENUNGSANLEITUNG ===== */
@@ -512,6 +55,7 @@ button:active {
     z-index: 99998;
     padding: 20px;
     backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
 }
 
 .help-overlay.show {
@@ -524,10 +68,12 @@ button:active {
     max-width: 700px;
     width: 100%;
     max-height: 90vh;
+    max-height: -webkit-fill-available;
     overflow-y: auto;
     padding: 30px;
     box-shadow: 0 20px 60px rgba(0,0,0,0.4);
     position: relative;
+    -webkit-overflow-scrolling: touch;
 }
 
 .help-content::-webkit-scrollbar {
@@ -591,17 +137,15 @@ button:active {
 }
 
 .help-content .help-close button {
-    padding: 10px 30px;
+    padding: 12px 30px;
     border-radius: 12px;
     font-weight: 700;
     background: var(--green);
     color: white;
     border: none;
     cursor: pointer;
-}
-
-.help-content .help-close button:hover {
-    background: #0d3d22;
+    touch-action: manipulation;
+    min-height: 48px;
 }
 
 .help-content .help-tip {
@@ -682,12 +226,13 @@ button:active {
 
 .login-box input {
     width: 100%;
-    padding: 14px;
+    padding: 16px 14px;
     border: 2px solid var(--border);
     border-radius: 12px;
     font-size: 1.1rem;
     margin-bottom: 15px;
     box-sizing: border-box;
+    touch-action: manipulation;
 }
 
 .login-box input:focus {
@@ -697,7 +242,7 @@ button:active {
 
 .login-box button {
     width: 100%;
-    padding: 14px;
+    padding: 16px;
     background: var(--green);
     color: white;
     border: none;
@@ -706,6 +251,8 @@ button:active {
     font-weight: 700;
     cursor: pointer;
     transition: background 0.3s;
+    touch-action: manipulation;
+    min-height: 54px;
 }
 
 .login-box button:hover {
@@ -741,21 +288,22 @@ button:active {
     color: white;
     border: none;
     border-radius: 50%;
-    width: 50px;
-    height: 50px;
+    width: 56px;
+    height: 56px;
     font-size: 1.5rem;
     cursor: pointer;
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     transition: transform 0.3s;
+    touch-action: manipulation;
 }
 
-.admin-toggle:hover {
-    transform: scale(1.1);
+.admin-toggle:active {
+    transform: scale(0.9);
 }
 
 .admin-modal {
     position: fixed;
-    bottom: 80px;
+    bottom: 90px;
     right: 20px;
     background: white;
     padding: 25px;
@@ -784,16 +332,17 @@ button:active {
 
 .admin-modal input {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     border: 2px solid var(--border);
     border-radius: 8px;
     font-size: 1rem;
     box-sizing: border-box;
+    touch-action: manipulation;
 }
 
 .admin-modal button {
     margin-top: 15px;
-    padding: 10px 20px;
+    padding: 14px 20px;
     background: var(--green);
     color: white;
     border: none;
@@ -801,6 +350,8 @@ button:active {
     font-weight: 700;
     cursor: pointer;
     width: 100%;
+    touch-action: manipulation;
+    min-height: 50px;
 }
 
 .admin-modal button:hover {
@@ -823,56 +374,520 @@ button:active {
     min-height: 20px;
 }
 
+/* ===== HEADER ===== */
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 500;
+    background: var(--green);
+    color: white;
+    padding: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.header h1 {
+    font-size: 1.6rem;
+}
+
+.header-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+button,
+select,
+input {
+    border: none;
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 1rem;
+    touch-action: manipulation;
+}
+
+button {
+    cursor: pointer;
+    background: var(--green);
+    color: white;
+    font-weight: 700;
+    touch-action: manipulation;
+    transition: transform 0.1s;
+    min-height: 44px;
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+.layout {
+    flex: 1;
+    padding: 16px;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.arena {
+    width: 100%;
+    max-width: 1200px;
+    height: 100%;
+    background: white;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,.3);
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+}
+
+.arena-header {
+    background: var(--light);
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.arena-title {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--green);
+    text-align: center;
+    flex: 1;
+}
+
+.team-name-edit {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.team-name-edit input {
+    padding: 6px 12px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    width: 140px;
+    transition: border-color 0.3s;
+    background: white;
+    color: #222;
+    touch-action: manipulation;
+}
+
+.team-name-edit input:focus {
+    outline: none;
+    border-color: var(--green);
+}
+
+.team-name-edit .team-w-input {
+    color: var(--red);
+}
+
+.team-name-edit .team-e-input {
+    color: var(--green);
+}
+
+.team-name-edit label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #555;
+}
+
+.scoreboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 0 14px 14px;
+    flex-shrink: 0;
+}
+
+.score-card {
+    background: #f7faf5;
+    border-radius: 18px;
+    padding: 16px 20px;
+    text-align: center;
+    border-bottom: 8px solid var(--green);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.score-card.red {
+    border-bottom-color: var(--red);
+}
+
+.team-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+}
+
+.team-name {
+    font-size: 1.2rem;
+    font-weight: 900;
+}
+
+.team-score {
+    font-size: 3.4rem;
+    font-weight: 900;
+    color: var(--green);
+    line-height: 1;
+}
+
+.score-card.red .team-score {
+    color: var(--red);
+}
+
+.team-wins {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--dark);
+    color: white;
+    padding: 6px 16px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1.2rem;
+    white-space: nowrap;
+}
+
+.team-wins span {
+    font-size: 1.4rem;
+}
+
+.kehren-wrapper {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 14px 14px;
+    min-height: 0;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+}
+
+.kehren-wrapper::-webkit-scrollbar {
+    width: 8px;
+}
+
+.kehren-wrapper::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 10px;
+}
+
+.kehren-wrapper::-webkit-scrollbar-thumb {
+    background: var(--green);
+    border-radius: 10px;
+}
+
+.kehren-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #0d3d22;
+}
+
+.kehren {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.kehren-title {
+    text-align: center;
+    font-weight: 900;
+    margin-bottom: 8px;
+}
+
+.kehre-row {
+    display: grid;
+    grid-template-columns: 90px 1fr 45px;
+    gap: 8px;
+    align-items: center;
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 8px;
+    margin-bottom: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+.kehre-row:active {
+    transform: scale(0.98);
+}
+
+.kehre-row.active {
+    border: 3px solid #4caf50;
+    background: #f3fff2;
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.2);
+}
+
+.kehre-row.completed {
+    border: 3px solid #ff9800;
+    background: #fff8e1;
+}
+
+.kehre-number {
+    font-size: .9rem;
+    font-weight: 900;
+    text-align: center;
+}
+
+.points {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.point-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    border: 2px solid var(--border);
+    background: white;
+    color: black;
+    font-weight: 900;
+    font-size: 16px;
+    touch-action: manipulation;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.point-btn:active {
+    transform: scale(0.92);
+    background: var(--green);
+    color: white;
+}
+
+.point-btn.active-point {
+    background: var(--green);
+    color: white;
+    border-color: var(--green);
+}
+
+.kehre-value {
+    text-align: center;
+    font-weight: 900;
+    font-size: 1.1rem;
+}
+
+.footer {
+    position: sticky;
+    bottom: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 14px;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+    background: white;
+}
+
+.footer .footer-left {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.footer .footer-right {
+    font-size: 0.85rem;
+    color: #555;
+    background: var(--light);
+    padding: 4px 14px;
+    border-radius: 30px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    margin-left: 20px;
+}
+
+.gold {
+    background: var(--gold);
+    color: black;
+}
+
+.gold:active {
+    background: #f0c860;
+}
+
+.toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #111;
+    color: white;
+    padding: 14px 20px;
+    border-radius: 14px;
+    opacity: 0;
+    transition: .3s;
+    z-index: 9999;
+    pointer-events: none;
+    font-size: 1rem;
+}
+
+.toast.show {
+    opacity: 1;
+}
+
+.player-selector {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: rgba(255,255,255,0.15);
+    padding: 4px 12px 4px 8px;
+    border-radius: 40px;
+}
+
+.player-selector label {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.player-selector select {
+    background: white;
+    color: black;
+    padding: 6px 10px;
+    border-radius: 30px;
+    font-weight: 700;
+}
+
+/* Dialog für Kehrenauswahl */
+.kehren-dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    touch-action: manipulation;
+}
+
+.kehren-dialog-overlay.show {
+    display: flex;
+}
+
+.kehren-dialog {
+    background: white;
+    border-radius: 22px;
+    padding: 30px;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    touch-action: manipulation;
+}
+
+.kehren-dialog h3 {
+    margin-bottom: 16px;
+    color: var(--green);
+    font-size: 1.4rem;
+}
+
+.kehren-dialog select {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+    min-height: 50px;
+    touch-action: manipulation;
+}
+
+.kehren-dialog .dialog-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.kehren-dialog .dialog-buttons button {
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 700;
+    min-height: 50px;
+    min-width: 90px;
+    touch-action: manipulation;
+}
+
+.kehren-dialog .dialog-buttons .btn-cancel {
+    background: #ccc;
+    color: #333;
+}
+
+.kehren-dialog .dialog-buttons .btn-confirm {
+    background: var(--red);
+    color: white;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 900px) {
     .scoreboard {
         grid-template-columns: 1fr;
         gap: 8px;
     }
-    
+
     .kehren {
         grid-template-columns: 1fr;
         gap: 10px;
     }
-    
+
     .point-btn {
         width: 58px;
         height: 58px;
         font-size: 22px;
         border-radius: 12px;
     }
-    
+
     .team-score {
         font-size: 4rem;
     }
-    
+
     .kehre-row {
         grid-template-columns: 80px 1fr 50px;
         padding: 10px;
         border-radius: 16px;
     }
-    
+
     .kehre-number {
         font-size: 1rem;
     }
-    
+
     .kehre-value {
         font-size: 1.3rem;
     }
-    
+
     .header h1 {
         font-size: 1.3rem;
     }
-    
+
     .footer .footer-right {
         margin-left: 0;
     }
-    
+
     .team-name-edit input {
         width: 100px;
         font-size: 0.8rem;
     }
-    
+
     .arena-header {
         flex-direction: column;
         align-items: stretch;
@@ -890,25 +905,77 @@ button:active {
         height: 48px;
         font-size: 18px;
     }
-    
+
     .kehre-row {
         grid-template-columns: 60px 1fr 40px;
         padding: 6px;
         gap: 4px;
     }
-    
+
     .team-score {
         font-size: 3rem;
     }
-    
+
     .header h1 {
         font-size: 1.1rem;
     }
-    
+
     .header-controls select,
     .header-controls button {
         padding: 6px 10px;
         font-size: 0.85rem;
+    }
+}
+
+/* ===== TABLET OPTIMIERUNGEN ===== */
+@media (min-width: 601px) and (max-width: 1024px) {
+    .point-btn {
+        width: 64px;
+        height: 64px;
+        font-size: 24px;
+        border-radius: 14px;
+    }
+
+    .kehre-row {
+        grid-template-columns: 90px 1fr 55px;
+        padding: 12px;
+        border-radius: 18px;
+    }
+
+    .kehre-number {
+        font-size: 1.1rem;
+    }
+
+    .kehre-value {
+        font-size: 1.4rem;
+    }
+
+    .team-score {
+        font-size: 4.5rem;
+    }
+
+    .team-name {
+        font-size: 1.4rem;
+    }
+
+    button,
+    select,
+    input {
+        padding: 14px 18px;
+        font-size: 1.1rem;
+    }
+
+    button {
+        min-height: 54px;
+    }
+
+    .header h1 {
+        font-size: 1.6rem;
+    }
+
+    .footer .footer-left button {
+        padding: 12px 20px;
+        min-height: 50px;
     }
 }
 </style>
@@ -918,14 +985,14 @@ button:active {
 <!-- ===== LOGIN OVERLAY ===== -->
 <div class="login-overlay" id="loginOverlay">
     <div class="login-box">
-        <h1>Stockschützen Trainingsystem</h1>
+        <h1>Stockschützen Trainingssystem</h1>
         <div class="subtitle">Trainingssystem</div>
-        
+
         <input type="password" id="passwordInput" placeholder="Passwort eingeben..." autofocus>
         <button onclick="checkPassword()">🔓 Zugang</button>
-        
+
         <div class="error" id="loginError"></div>
-        
+
         <div class="admin-hint">
             🔑 Admin Passwort kann im Hauptmenü unten rechts geändert werden
         </div>
@@ -935,22 +1002,22 @@ button:active {
 <!-- ===== ADMIN PANEL ===== -->
 <div class="admin-panel" id="adminPanel">
     <button class="admin-toggle" onclick="toggleAdminModal()">⚙️</button>
-    
+
     <div class="admin-modal" id="adminModal">
         <h3>⚙️ Admin-Panel</h3>
         <p style="color:#666;font-size:0.9rem;margin-bottom:15px;">Passwort ändern</p>
-        
+
         <label>Aktuelles Passwort</label>
         <input type="password" id="currentPasswordInput" placeholder="Aktuelles Passwort">
-        
+
         <label>Neues Passwort</label>
         <input type="password" id="newPasswordInput" placeholder="Neues Passwort (min. 4 Zeichen)">
-        
+
         <label>Neues Passwort bestätigen</label>
         <input type="password" id="confirmPasswordInput" placeholder="Neues Passwort bestätigen">
-        
+
         <button onclick="changePassword()">🔑 Passwort ändern</button>
-        
+
         <div class="error" id="adminError"></div>
         <div class="current-pw" id="currentPwDisplay">Aktuelles Passwort: ********</div>
     </div>
@@ -958,9 +1025,9 @@ button:active {
 
 <!-- ===== HILFE / BEDIENUNGSANLEITUNG ===== -->
 <div class="help-overlay" id="helpOverlay" onclick="closeHelp(event)">
-    <div class="help-content" onclick="event.stopPropagation()">
+    <div class="help-content" onclick="event.stopPropagation();">
         <h2>📖 Bedienungsanleitung</h2>
-        <div class="help-subtitle">Trainingssystem</div>
+        <div class="help-subtitle">Stockschützen Trainingssystem</div>
 
         <h3>1. Erster Zugriff & Login</h3>
         <ol>
@@ -1040,23 +1107,23 @@ button:active {
 </div>
 
 <!-- ===== MAIN APP CONTENT ===== -->
-<div id="app-content" style="display:none; flex-direction:column; height:100vh;">
+<div id="app-content" style="display:none; flex-direction:column; height:100%;">
     <div class="header">
-        <h1>Stockschützen Trainingsystem</h1>
+        <h1>Stockschützen Trainingssystem</h1>
 
         <div class="header-controls">
             <div class="player-selector">
                 <label for="playerCount">👥</label>
                 <select id="playerCount">
                     <option value="3">3 Spieler</option>
-                    <option value="4"selected>4 Spieler</option>
+                    <option value="4" selected>4 Spieler</option>
                     <option value="5">5 Spieler</option>
                     <option value="6">6 Spieler</option>
                 </select>
             </div>
 
             <select id="gamesSelect">
-                <option value="2"selected>2 Siege</option>
+                <option value="2" selected>2 Siege</option>
                 <option value="3">3 Siege</option>
                 <option value="4">4 Siege</option>
                 <option value="5">5 Siege</option>
@@ -1093,7 +1160,7 @@ button:active {
 
 <script>
 // ===== TEAM-NAMEN SPEICHER =====
-const TEAM_NAMES_KEY = 'esv_grein_team_names';
+const TEAM_NAMES_KEY = 'stockschuetzen_team_names';
 
 function getTeamNames() {
     let names = localStorage.getItem(TEAM_NAMES_KEY);
@@ -1115,7 +1182,7 @@ function saveTeamNames(teamW, teamE) {
 }
 
 // ===== PASSWORT-SYSTEM =====
-const STORAGE_KEY = 'esv_grein_password';
+const STORAGE_KEY = 'stockschuetzen_password';
 
 function getStoredPassword() {
     let pw = localStorage.getItem(STORAGE_KEY);
@@ -1130,7 +1197,7 @@ function checkPassword() {
     const input = document.getElementById('passwordInput');
     const error = document.getElementById('loginError');
     const storedPw = getStoredPassword();
-    
+
     if (input.value === storedPw) {
         document.getElementById('loginOverlay').classList.add('hidden');
         document.getElementById('app-content').style.display = 'flex';
@@ -1138,7 +1205,7 @@ function checkPassword() {
         input.value = '';
         input.blur();
         updateCurrentPasswordDisplay();
-        render();
+        setTimeout(render, 50);
     } else {
         error.textContent = '❌ Falsches Passwort! Bitte versuche es erneut.';
         input.value = '';
@@ -1148,11 +1215,13 @@ function checkPassword() {
 }
 
 function logout() {
-    document.getElementById('loginOverlay').classList.remove('hidden');
-    document.getElementById('app-content').style.display = 'none';
-    document.getElementById('passwordInput').value = '';
-    document.getElementById('passwordInput').focus();
-    document.getElementById('loginError').textContent = '';
+    if (confirm('Möchten Sie sich wirklich ausloggen?')) {
+        document.getElementById('loginOverlay').classList.remove('hidden');
+        document.getElementById('app-content').style.display = 'none';
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('passwordInput').focus();
+        document.getElementById('loginError').textContent = '';
+    }
 }
 
 document.getElementById('passwordInput').addEventListener('keydown', function(e) {
@@ -1165,7 +1234,7 @@ document.getElementById('passwordInput').addEventListener('keydown', function(e)
 function toggleAdminModal() {
     const modal = document.getElementById('adminModal');
     modal.classList.toggle('active');
-    
+
     if (!modal.classList.contains('active')) {
         document.getElementById('currentPasswordInput').value = '';
         document.getElementById('newPasswordInput').value = '';
@@ -1188,39 +1257,39 @@ function changePassword() {
     const newPw = document.getElementById('newPasswordInput').value;
     const confirmPw = document.getElementById('confirmPasswordInput').value;
     const error = document.getElementById('adminError');
-    
+
     const storedPw = getStoredPassword();
-    
+
     if (currentPw !== storedPw) {
         error.textContent = '❌ Aktuelles Passwort ist falsch!';
         return;
     }
-    
+
     if (newPw.length < 4) {
         error.textContent = '❌ Neues Passwort muss mindestens 4 Zeichen haben!';
         return;
     }
-    
+
     if (newPw !== confirmPw) {
         error.textContent = '❌ Neue Passwörter stimmen nicht überein!';
         return;
     }
-    
+
     if (newPw === currentPw) {
         error.textContent = '❌ Neues Passwort muss sich vom alten unterscheiden!';
         return;
     }
-    
+
     localStorage.setItem(STORAGE_KEY, newPw);
     error.textContent = '✅ Passwort erfolgreich geändert!';
     error.style.color = '#1f5e3a';
-    
+
     document.getElementById('currentPasswordInput').value = '';
     document.getElementById('newPasswordInput').value = '';
     document.getElementById('confirmPasswordInput').value = '';
-    
+
     updateCurrentPasswordDisplay();
-    
+
     setTimeout(() => {
         error.textContent = '';
         error.style.color = '';
@@ -1240,7 +1309,6 @@ function closeHelp(event) {
     document.body.style.overflow = '';
 }
 
-// Escape-Taste schließt Hilfe
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         if (document.getElementById('helpOverlay').classList.contains('show')) {
@@ -1274,11 +1342,13 @@ function render() {
     const appContent = document.getElementById('app-content');
     if (appContent.style.display !== 'flex') return;
     document.getElementById('layout').innerHTML = renderArena(state.arena);
-    scrollToActiveKehre();
-    
+    setTimeout(scrollToActiveKehre, 100);
+
     const names = getTeamNames();
-    document.getElementById('teamWInput').value = names.teamW;
-    document.getElementById('teamEInput').value = names.teamE;
+    const teamWInput = document.getElementById('teamWInput');
+    const teamEInput = document.getElementById('teamEInput');
+    if (teamWInput) teamWInput.value = names.teamW;
+    if (teamEInput) teamEInput.value = names.teamE;
 }
 
 function renderArena(arena) {
@@ -1351,7 +1421,7 @@ function renderArena(arena) {
                 <button onclick="logout()" style="background:var(--red);">🚪 Logout</button>
                 <button onclick="openHelp()" style="background:#555;">❓ Hilfe</button>
             </div>
-            <div class="footer-right">Version 1.3</div>
+            <div class="footer-right">Version 1.4</div>
         </div>
     </div>
     `;
@@ -1393,7 +1463,7 @@ function renderKehren(arena, team) {
 function updateTeamName(team, newName) {
     const names = getTeamNames();
     const trimmed = newName.trim() || (team === 'W' ? 'Mannschaft W' : 'Mannschaft E');
-    
+
     if (team === 'W') {
         names.teamW = trimmed;
         state.arena.teamW = trimmed;
@@ -1401,7 +1471,7 @@ function updateTeamName(team, newName) {
         names.teamE = trimmed;
         state.arena.teamE = trimmed;
     }
-    
+
     saveTeamNames(names.teamW, names.teamE);
     render();
     toast(`✅ Teamname geändert: ${trimmed}`);
@@ -1441,27 +1511,25 @@ function handleKehreClick(index, team) {
 }
 
 function scrollToActiveKehre() {
-    setTimeout(() => {
-        const wrapper = document.getElementById('kehrenWrapper');
-        if (!wrapper) return;
+    const wrapper = document.getElementById('kehrenWrapper');
+    if (!wrapper) return;
 
-        const activeRow = wrapper.querySelector('.kehre-row.active');
-        if (activeRow) {
-            const wrapperRect = wrapper.getBoundingClientRect();
-            const rowRect = activeRow.getBoundingClientRect();
+    const activeRow = wrapper.querySelector('.kehre-row.active');
+    if (activeRow) {
+        const wrapperRect = wrapper.getBoundingClientRect();
+        const rowRect = activeRow.getBoundingClientRect();
 
-            const isVisible = 
-                rowRect.top >= wrapperRect.top + 10 &&
-                rowRect.bottom <= wrapperRect.bottom - 10;
+        const isVisible =
+            rowRect.top >= wrapperRect.top + 10 &&
+            rowRect.bottom <= wrapperRect.bottom - 10;
 
-            if (!isVisible) {
-                activeRow.scrollIntoView({
-                    block: 'center',
-                    behavior: 'smooth'
-                });
-            }
+        if (!isVisible) {
+            activeRow.scrollIntoView({
+                block: 'center',
+                behavior: 'smooth'
+            });
         }
-    }, 50);
+    }
 }
 
 function evaluateGame() {
@@ -1633,21 +1701,43 @@ document.getElementById('gamesSelect').addEventListener('change', function(e) {
     render();
 });
 
-// ===== HÖHENKORREKTUR =====
+// ===== HÖHENKORREKTUR FÜR TABLETS =====
 function setCorrectHeight() {
     const vh = window.innerHeight;
+    const vw = window.innerWidth;
+    
+    // Für Android-Tablets mit -webkit-fill-available
     document.documentElement.style.setProperty('height', vh + 'px');
     document.body.style.setProperty('height', vh + 'px');
+    
+    // Für Safari auf iOS
+    if (navigator.userAgent.includes('Safari') && !navigator.userAgent.includes('Chrome')) {
+        document.documentElement.style.setProperty('height', '-webkit-fill-available');
+        document.body.style.setProperty('height', '-webkit-fill-available');
+    }
 }
 
-window.addEventListener('resize', setCorrectHeight);
+window.addEventListener('resize', function() {
+    setTimeout(setCorrectHeight, 100);
+});
+
 window.addEventListener('orientationchange', function() {
     setTimeout(setCorrectHeight, 300);
+    setTimeout(render, 400);
 });
+
+// Initiale Höhenkorrektur
 setCorrectHeight();
 
 // ===== INIT =====
 render();
+
+// Wenn die App geladen ist, einmal neu rendern
+setTimeout(function() {
+    if (document.getElementById('app-content').style.display === 'flex') {
+        render();
+    }
+}, 200);
 </script>
 
 </body>
