@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
-<title>Stocksport Training</title>
+<title>ESV Grein – Trainingssystem</title>
 
 <style>
 :root{
@@ -498,6 +498,147 @@ button:active {
     color: white;
 }
 
+/* ===== HILFE / BEDIENUNGSANLEITUNG ===== */
+.help-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.6);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 99998;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+}
+
+.help-overlay.show {
+    display: flex;
+}
+
+.help-content {
+    background: white;
+    border-radius: 22px;
+    max-width: 700px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 30px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    position: relative;
+}
+
+.help-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.help-content::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 10px;
+}
+
+.help-content::-webkit-scrollbar-thumb {
+    background: var(--green);
+    border-radius: 10px;
+}
+
+.help-content h2 {
+    color: var(--green);
+    font-size: 1.8rem;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.help-content .help-subtitle {
+    color: #666;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+}
+
+.help-content h3 {
+    color: var(--dark);
+    margin-top: 20px;
+    margin-bottom: 8px;
+    font-size: 1.1rem;
+    border-bottom: 2px solid var(--light);
+    padding-bottom: 4px;
+}
+
+.help-content ul, .help-content ol {
+    padding-left: 25px;
+    margin: 8px 0 12px;
+    line-height: 1.7;
+}
+
+.help-content li {
+    margin-bottom: 4px;
+}
+
+.help-content .help-close {
+    position: sticky;
+    bottom: 0;
+    background: white;
+    padding-top: 15px;
+    margin-top: 15px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.help-content .help-close button {
+    padding: 10px 30px;
+    border-radius: 12px;
+    font-weight: 700;
+    background: var(--green);
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.help-content .help-close button:hover {
+    background: #0d3d22;
+}
+
+.help-content .help-tip {
+    background: var(--light);
+    padding: 10px 15px;
+    border-radius: 10px;
+    border-left: 4px solid var(--green);
+    margin: 10px 0;
+}
+
+.help-content .help-tip strong {
+    color: var(--green);
+}
+
+.help-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 0.9rem;
+}
+
+.help-content table th {
+    background: var(--green);
+    color: white;
+    padding: 8px 12px;
+    text-align: left;
+}
+
+.help-content table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.help-content table tr:nth-child(even) {
+    background: #f9faf8;
+}
+
 /* ===== LOGIN OVERLAY ===== */
 .login-overlay {
     position: fixed;
@@ -736,6 +877,11 @@ button:active {
         flex-direction: column;
         align-items: stretch;
     }
+
+    .help-content {
+        padding: 20px;
+        max-height: 95vh;
+    }
 }
 
 @media (max-width: 600px) {
@@ -772,7 +918,7 @@ button:active {
 <!-- ===== LOGIN OVERLAY ===== -->
 <div class="login-overlay" id="loginOverlay">
     <div class="login-box">
-        <h1>🎯 Stockschützen Trainingssystem</h1>
+        <h1>ESV Grein</h1>
         <div class="subtitle">Trainingssystem</div>
         
         <input type="password" id="passwordInput" placeholder="Passwort eingeben..." autofocus>
@@ -781,7 +927,7 @@ button:active {
         <div class="error" id="loginError"></div>
         
         <div class="admin-hint">
-            🔑 Admin: Passwort kann unten rechts geändert werden
+            🔑 Admin: Passwort kann im Hauptmenü unten rechts geändert werden
         </div>
     </div>
 </div>
@@ -810,10 +956,93 @@ button:active {
     </div>
 </div>
 
+<!-- ===== HILFE / BEDIENUNGSANLEITUNG ===== -->
+<div class="help-overlay" id="helpOverlay" onclick="closeHelp(event)">
+    <div class="help-content" onclick="event.stopPropagation()">
+        <h2>📖 Bedienungsanleitung</h2>
+        <div class="help-subtitle">ESV Grein – Trainingssystem</div>
+
+        <h3>1. Erster Zugriff & Login</h3>
+        <ol>
+            <li>Öffnen Sie die Datei in einem Browser</li>
+            <li>Geben Sie das <strong>Standard-Passwort</strong> ein: <code>admin123</code></li>
+            <li>Klicken Sie auf <strong>"🔓 Zugang"</strong> oder drücken Sie <strong>Enter</strong></li>
+        </ol>
+
+        <h3>2. Das Hauptfenster</h3>
+        <ul>
+            <li><strong>Kopfzeile:</strong> Titel, Spieleranzahl, Einstellungen, Reset</li>
+            <li><strong>Punktestand:</strong> Gesamtpunkte + gewonnene Spiele</li>
+            <li><strong>Kehren-Bereich:</strong> Alle Kehren mit Punkte-Buttons (0–6)</li>
+            <li><strong>Fußzeile:</strong> Spiel werten, Neustart, Kehre löschen, Logout, Hilfe</li>
+        </ul>
+
+        <h3>3. So wird trainiert</h3>
+        <ul>
+            <li><strong>Spieleranzahl:</strong> Über das Dropdown <strong>"👥"</strong> einstellen (3–6)</li>
+            <li><strong>Kehrenanzahl:</strong> Über <strong>"Kehren"</strong> Dropdown wählen (4/6/8)</li>
+            <li><strong>Siege bis Trainingssieg:</strong> Über <strong>"Siege"</strong> Dropdown (2–6)</li>
+            <li><strong>Punkte eintragen:</strong> Klicken Sie auf einen Zahlen-Button (0–6) für das jeweilige Team</li>
+            <li><strong>Automatische Wertung:</strong> Wenn alle Kehren ausgefüllt sind, wird das Spiel automatisch gewertet</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>💡 Tipp:</strong> Die aktuelle Kehre wird durch einen <strong>grünen Rahmen</strong> markiert. Abgeschlossene Kehren haben einen <strong>orangen Rahmen</strong>.
+        </div>
+
+        <h3>4. Sonderfunktionen</h3>
+        <table>
+            <tr><th>Funktion</th><th>Button</th><th>Wirkung</th></tr>
+            <tr><td>Kehre löschen</td><td>"Kehre Löschen"</td><td>Löscht eine einzelne Kehre</td></tr>
+            <tr><td>Spiel zurücksetzen</td><td>"Neues Spiel Starten"</td><td>Löscht alle Kehren, Siege bleiben</td></tr>
+            <tr><td>Kompletter Reset</td><td>↺ (roter Button)</td><td>Setzt alles zurück (Punkte + Siege)</td></tr>
+            <tr><td>Logout</td><td>"🚪 Logout"</td><td>Sperrt die Anwendung</td></tr>
+        </table>
+
+        <h3>5. Teamnamen ändern</h3>
+        <ul>
+            <li>Geben Sie in den Textfeldern neben <strong>"⚪ Team 1"</strong> und <strong>"🔴 Team 2"</strong> die gewünschten Namen ein</li>
+            <li>Die Änderung wird sofort übernommen und gespeichert</li>
+        </ul>
+
+        <h3>6. Admin-Bereich – Passwort ändern</h3>
+        <ol>
+            <li>Klicken Sie auf das <strong>Zahnrad-Symbol (⚙️)</strong> unten rechts</li>
+            <li>Geben Sie <strong>aktuelles Passwort</strong> ein (Standard: <code>admin123</code>)</li>
+            <li>Geben Sie <strong>neues Passwort</strong> ein (mindestens 4 Zeichen)</li>
+            <li>Bestätigen Sie das neue Passwort</li>
+            <li>Klicken Sie auf <strong>"🔑 Passwort ändern"</strong></li>
+        </ol>
+
+        <div class="help-tip">
+            <strong>⚠️ Achtung:</strong> Bei Passwortverlust gibt es keine Wiederherstellung!
+        </div>
+
+        <h3>7. Tastenkürzel</h3>
+        <table>
+            <tr><th>Taste</th><th>Funktion</th></tr>
+            <tr><td><kbd>Enter</kbd></td><td>Login bestätigen</td></tr>
+            <tr><td><kbd>ESC</kbd></td><td>Logout (mit Bestätigung)</td></tr>
+        </table>
+
+        <h3>8. Technische Hinweise</h3>
+        <ul>
+            <li><strong>Browser:</strong> Alle aktuellen Browser (Chrome, Firefox, Edge, Safari)</li>
+            <li><strong>Geräte:</strong> Desktop, Tablet, Smartphone (responsive)</li>
+            <li><strong>Datenspeicherung:</strong> Lokal im Browser – keine externen Server</li>
+            <li><strong>Datei:</strong> Einzelne HTML-Datei – keine Installation nötig</li>
+        </ul>
+
+        <div class="help-close">
+            <button onclick="closeHelp()">❌ Schließen</button>
+        </div>
+    </div>
+</div>
+
 <!-- ===== MAIN APP CONTENT ===== -->
 <div id="app-content" style="display:none; flex-direction:column; height:100vh;">
     <div class="header">
-        <h1>🎯 Stockschützen Trainingssystem</h1>
+        <h1>ESV Grein Training</h1>
 
         <div class="header-controls">
             <div class="player-selector">
@@ -863,7 +1092,7 @@ button:active {
 <div class="toast" id="toast"></div>
 
 <script>
-// ===== TEAM-NAMEN SPEICHER (neu) =====
+// ===== TEAM-NAMEN SPEICHER =====
 const TEAM_NAMES_KEY = 'esv_grein_team_names';
 
 function getTeamNames() {
@@ -999,6 +1228,27 @@ function changePassword() {
     }, 3000);
 }
 
+// ===== HILFE =====
+function openHelp() {
+    document.getElementById('helpOverlay').classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeHelp(event) {
+    if (event && event.target !== event.currentTarget) return;
+    document.getElementById('helpOverlay').classList.remove('show');
+    document.body.style.overflow = '';
+}
+
+// Escape-Taste schließt Hilfe
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        if (document.getElementById('helpOverlay').classList.contains('show')) {
+            closeHelp();
+        }
+    }
+});
+
 // ===== APP STATE =====
 const state = {
     kehren: 6,
@@ -1026,7 +1276,6 @@ function render() {
     document.getElementById('layout').innerHTML = renderArena(state.arena);
     scrollToActiveKehre();
     
-    // Team-Namen in Input-Felder setzen
     const names = getTeamNames();
     document.getElementById('teamWInput').value = names.teamW;
     document.getElementById('teamEInput').value = names.teamE;
@@ -1040,7 +1289,7 @@ function renderArena(arena) {
     return `
     <div class="arena">
         <div class="arena-header">
-            <div class="arena-title">Stockschützen Trainingssystem</div>
+            <div class="arena-title">ESV Grein – Training</div>
             <div class="team-name-edit">
                 <div>
                     <label>⚪ Team 1</label>
@@ -1100,8 +1349,9 @@ function renderArena(arena) {
                 <button onclick="resetGame()">Neues Spiel Starten</button>
                 <button onclick="openKehrenDialog()">Kehre Löschen</button>
                 <button onclick="logout()" style="background:var(--red);">🚪 Logout</button>
+                <button onclick="openHelp()" style="background:#555;">❓ Hilfe</button>
             </div>
-            <div class="footer-right">@Roland Koll Version 1.2</div>
+            <div class="footer-right">Version 1.1</div>
         </div>
     </div>
     `;
@@ -1140,7 +1390,6 @@ function renderKehren(arena, team) {
     return html;
 }
 
-// ===== TEAM-NAMEN AKTUALISIEREN (neu) =====
 function updateTeamName(team, newName) {
     const names = getTeamNames();
     const trimmed = newName.trim() || (team === 'W' ? 'Mannschaft W' : 'Mannschaft E');
